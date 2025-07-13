@@ -20,7 +20,7 @@ export default function StaffManagementModal({
     name: "",
     role: "Doctor" as Staff["role"],
     department: "Emergency",
-    color: "#9e5fff",
+    color: "#9B59B6",
   });
 
   useEffect(() => {
@@ -127,7 +127,13 @@ export default function StaffManagementModal({
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 transition-colors"
+              className="px-4 py-2 rounded-md transition-colors font-medium"
+              style={{ 
+                backgroundColor: "var(--brand-primary)",
+                color: "#000"
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--brand-primary-hover)"}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "var(--brand-primary)"}
             >
               {mode === "create" ? "Add Staff" : "Save Changes"}
             </button>

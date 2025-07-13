@@ -18,7 +18,13 @@ export default function StaffList({ staff, onAddStaff, onEditStaff, onDeleteStaf
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Staff Members</h2>
         <button
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+          className="px-4 py-2 text-white rounded-lg transition-colors"
+          style={{ 
+            backgroundColor: "var(--brand-primary)",
+            color: "#000"
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--brand-primary-hover)"}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "var(--brand-primary)"}
           onClick={() => {
             setModalMode("create");
             setEditingStaff(undefined);
@@ -52,7 +58,10 @@ export default function StaffList({ staff, onAddStaff, onEditStaff, onDeleteStaf
                   setEditingStaff(member);
                   setIsModalOpen(true);
                 }}
-                className="p-1 text-blue-600 hover:bg-blue-100 rounded"
+                className="p-1 rounded transition-colors"
+                style={{ color: "var(--brand-secondary)" }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--brand-secondary-light)"}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
                 aria-label="Edit staff"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -32,9 +32,12 @@ export default function CalendarToolbar({
               onClick={() => onViewModeChange(mode.value as any)}
               className={`px-4 py-2 rounded-md transition-colors ${
                 viewMode === mode.value
-                  ? "bg-blue-500 text-white"
+                  ? "text-white"
                   : "text-gray-700 hover:bg-gray-200"
               }`}
+              style={viewMode === mode.value ? {
+                backgroundColor: "var(--brand-tertiary)",
+              } : {}}
             >
               {mode.label}
             </button>
@@ -45,7 +48,13 @@ export default function CalendarToolbar({
         <div className="flex items-center gap-2">
           <button
             onClick={() => onNavigate("today")}
-            className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md transition-colors"
+            className="px-4 py-2 rounded-md transition-colors font-medium"
+            style={{ 
+              backgroundColor: "var(--brand-secondary)",
+              color: "#000"
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--brand-secondary-hover)"}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "var(--brand-secondary)"}
           >
             Today
           </button>

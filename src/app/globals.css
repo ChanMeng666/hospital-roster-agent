@@ -6,6 +6,20 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+  
+  /* Brand Colors */
+  --brand-primary: #06f9c0;
+  --brand-secondary: #29dfe3;
+  --brand-tertiary: #323ce8;
+  
+  /* Derived Colors */
+  --brand-primary-hover: #05e0ab;
+  --brand-secondary-hover: #24c9cc;
+  --brand-tertiary-hover: #2d35d0;
+  
+  --brand-primary-light: rgba(6, 249, 192, 0.1);
+  --brand-secondary-light: rgba(41, 223, 227, 0.1);
+  --brand-tertiary-light: rgba(50, 60, 232, 0.1);
 }
 
 @media (prefers-color-scheme: dark) {

@@ -6,6 +6,7 @@ import { RosterAgentState } from "../types/roster";
 import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
 import CalendarToolbar from "./CalendarToolbar";
 import { calendarTemplates } from "../utils/calendarTemplates";
+import { calendarTheme } from "../utils/calendarTheme";
 
 interface RosterCalendarProps {
   rosterState: RosterAgentState;
@@ -648,6 +649,7 @@ export default function RosterCalendar({ rosterState, onStateChange }: RosterCal
         isReadOnly={false}
         usageStatistics={false}
         template={calendarTemplates}
+        theme={calendarTheme}
         onBeforeCreateEvent={onBeforeCreateEvent}
         onBeforeDeleteEvent={onBeforeDeleteEvent}
         onBeforeUpdateEvent={onBeforeUpdateEvent}

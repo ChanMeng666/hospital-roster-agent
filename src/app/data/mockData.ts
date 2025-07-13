@@ -1,11 +1,11 @@
 import { RosterAgentState, Staff, Shift } from "../types/roster";
 
 export const mockStaff: Staff[] = [
-  { id: "1", name: "Dr. Sarah Johnson", role: "Doctor", department: "Emergency", color: "#9e5fff" },
-  { id: "2", name: "Dr. Michael Chen", role: "Doctor", department: "Emergency", color: "#00a9ff" },
-  { id: "3", name: "Nurse Emily Davis", role: "Nurse", department: "Emergency", color: "#03bd9e" },
-  { id: "4", name: "Nurse James Wilson", role: "Nurse", department: "Emergency", color: "#ff5583" },
-  { id: "5", name: "Tech Alex Brown", role: "Technician", department: "Emergency", color: "#ffbb3b" },
+  { id: "1", name: "Dr. Sarah Johnson", role: "Doctor", department: "Emergency", color: "#FF6B6B" },
+  { id: "2", name: "Dr. Michael Chen", role: "Doctor", department: "Emergency", color: "#4ECDC4" },
+  { id: "3", name: "Nurse Emily Davis", role: "Nurse", department: "Emergency", color: "#45B7D1" },
+  { id: "4", name: "Nurse James Wilson", role: "Nurse", department: "Emergency", color: "#96CEB4" },
+  { id: "5", name: "Tech Alex Brown", role: "Technician", department: "Emergency", color: "#FECA57" },
 ];
 
 const today = new Date();
