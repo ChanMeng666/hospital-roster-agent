@@ -3,6 +3,8 @@ import { CopilotKit } from "@copilotkit/react-core";
 import { CopilotSidebar } from "@copilotkit/react-ui";
 import "@copilotkit/react-ui/styles.css";
 import "@toast-ui/calendar/dist/toastui-calendar.min.css";
+import "tui-date-picker/dist/tui-date-picker.css";
+import "tui-time-picker/dist/tui-time-picker.css";
 import RosterCalendar from "./components/RosterCalendar";
 import StaffList from "./components/StaffList";
 import { RosterAgentState, Staff } from "./types/roster";

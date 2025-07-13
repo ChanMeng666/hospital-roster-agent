@@ -52,3 +52,40 @@ body {
   overflow-y: auto;
   background-color: #f3f4f6;
 }
+
+/* TUI Calendar Custom Styles - Minimal overrides for brand colors */
+/* Fix time picker text color issue */
+.toastui-calendar-popup-container .toastui-calendar-datetime-input,
+.toastui-calendar-form-container .toastui-calendar-datetime-input,
+.toastui-calendar-popup-section input {
+  color: #333 !important;
+}
+
+/* Style the confirm/save button with brand color */
+.toastui-calendar-popup-button.toastui-calendar-popup-confirm {
+  background-color: var(--brand-primary) !important;
+  color: #000 !important;
+}
+
+.toastui-calendar-popup-button.toastui-calendar-popup-confirm:hover {
+  background-color: var(--brand-primary-hover) !important;
+}
+
+/* Checkbox accent color */
+input[type="checkbox"] {
+  accent-color: var(--brand-primary);
+}
+
+/* Dropdown hover state */
+.toastui-calendar-dropdown-menu-item:hover {
+  background-color: var(--brand-primary-light) !important;
+}
+
+/* Focus states for inputs */
+.toastui-calendar-popup-section input:focus,
+.toastui-calendar-popup-section-item.toastui-calendar-focus {
+  border-color: var(--brand-primary) !important;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--brand-primary-light);
+}
