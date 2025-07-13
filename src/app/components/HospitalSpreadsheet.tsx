@@ -21,6 +21,46 @@ export default function HospitalSpreadsheet({
   setSelectedSpreadsheetIndex,
   setSpreadsheets,
 }: HospitalSpreadsheetProps) {
+  // Function to export spreadsheet data
+  const exportSpreadsheet = () => {
+    const dataStr = JSON.stringify(spreadsheet, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = `${spreadsheet.title.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.json`;
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+  };
+  
+  // Function to import spreadsheet data
+  const importSpreadsheet = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target?.result as string);
+        if (data.title && data.rows) {
+          const newSpreadsheet: SpreadsheetData = {
+            title: data.title,
+            rows: data.rows,
+          };
+          setSpreadsheets([...spreadsheets, newSpreadsheet]);
+          setSelectedSpreadsheetIndex(spreadsheets.length);
+        }
+      } catch (error) {
+        console.error('Error importing spreadsheet:', error);
+        alert('Error importing spreadsheet. Please check the file format.');
+      }
+    };
+    reader.readAsText(file);
+    
+    // Reset input
+    event.target.value = '';
+  };
   // Make spreadsheet data readable by AI
   useCopilotReadable({
     description: "Current hospital roster spreadsheet",
@@ -475,8 +515,30 @@ export default function HospitalSpreadsheet({
             className="text-xl font-semibold bg-transparent border-none outline-none focus:border-b-2 transition-colors"
             style={{ borderColor: "var(--brand-primary)" }}
           />
-          <div className="text-sm text-gray-500">
-            {spreadsheet.rows.length} rows × {spreadsheet.rows[0]?.length || 0} columns
+          <div className="flex items-center gap-4">
+            <button
+              onClick={exportSpreadsheet}
+              className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded transition-colors"
+              title="Export spreadsheet"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+            </button>
+            <label className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded transition-colors cursor-pointer">
+              <input
+                type="file"
+                accept=".json"
+                onChange={importSpreadsheet}
+                className="hidden"
+              />
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+              </svg>
+            </label>
+            <div className="text-sm text-gray-500">
+              {spreadsheet.rows.length} rows × {spreadsheet.rows[0]?.length || 0} columns
+            </div>
           </div>
         </div>
       </div>
@@ -576,13 +638,12 @@ export default function HospitalSpreadsheet({
       <div className="bg-white border-t shadow-lg">
         <div className="flex items-center gap-2 p-3 overflow-x-auto">
           {spreadsheets.map((sheet, index) => (
-            <button
+            <div
               key={index}
-              onClick={() => setSelectedSpreadsheetIndex(index)}
-              className={`px-4 py-2 rounded-lg transition-colors whitespace-nowrap font-medium ${
+              className={`flex items-center gap-1 px-4 py-2 rounded-lg transition-colors whitespace-nowrap font-medium ${
                 selectedSpreadsheetIndex === index
                   ? "text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  : "bg-gray-100 text-gray-700"
               }`}
               style={
                 selectedSpreadsheetIndex === index
@@ -590,8 +651,41 @@ export default function HospitalSpreadsheet({
                   : {}
               }
             >
-              {sheet.title}
-            </button>
+              <button
+                onClick={() => setSelectedSpreadsheetIndex(index)}
+                className="flex-1"
+              >
+                {sheet.title}
+              </button>
+              {spreadsheets.length > 1 && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (window.confirm(`Are you sure you want to delete "${sheet.title}"?`)) {
+                      const updatedSpreadsheets = spreadsheets.filter((_, i) => i !== index);
+                      setSpreadsheets(updatedSpreadsheets);
+                      
+                      // Adjust selected index if needed
+                      if (selectedSpreadsheetIndex >= updatedSpreadsheets.length) {
+                        setSelectedSpreadsheetIndex(updatedSpreadsheets.length - 1);
+                      } else if (selectedSpreadsheetIndex > index) {
+                        setSelectedSpreadsheetIndex(selectedSpreadsheetIndex - 1);
+                      }
+                    }
+                  }}
+                  className={`ml-2 p-1 rounded hover:bg-opacity-20 transition-colors ${
+                    selectedSpreadsheetIndex === index
+                      ? "text-white hover:bg-white"
+                      : "text-red-500 hover:bg-red-500 hover:text-white"
+                  }`}
+                  title="Delete spreadsheet"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
+            </div>
           ))}
           <button
             onClick={() => {
