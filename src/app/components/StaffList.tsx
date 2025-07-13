@@ -7,9 +7,18 @@ interface StaffListProps {
   onAddStaff?: (staff: Omit<Staff, "id">) => void;
   onEditStaff?: (staff: Staff) => void;
   onDeleteStaff?: (staffId: string) => void;
+  selectedStaffIds?: Set<string>;
+  onSelectionChange?: (selectedIds: Set<string>) => void;
 }
 
-export default function StaffList({ staff, onAddStaff, onEditStaff, onDeleteStaff }: StaffListProps) {
+export default function StaffList({ 
+  staff, 
+  onAddStaff, 
+  onEditStaff, 
+  onDeleteStaff,
+  selectedStaffIds = new Set(),
+  onSelectionChange 
+}: StaffListProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingStaff, setEditingStaff] = useState<Staff | undefined>();
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
@@ -54,6 +63,25 @@ export default function StaffList({ staff, onAddStaff, onEditStaff, onDeleteStaf
     return grouped;
   }, [filteredStaff]);
 
+  // Handle staff selection
+  const handleStaffClick = (staffId: string, event: React.MouseEvent) => {
+    // Don't select if clicking on edit/delete buttons
+    if ((event.target as HTMLElement).closest('button')) {
+      return;
+    }
+    
+    const newSelection = new Set(selectedStaffIds);
+    if (newSelection.has(staffId)) {
+      newSelection.delete(staffId);
+    } else {
+      newSelection.add(staffId);
+    }
+    onSelectionChange?.(newSelection);
+  };
+
+  // Check if any staff are selected
+  const hasSelection = selectedStaffIds.size > 0;
+
   return (
     <div className="bg-white border-b">
       {/* Header with toggle */}
@@ -76,6 +104,11 @@ export default function StaffList({ staff, onAddStaff, onEditStaff, onDeleteStaf
             </button>
             <span className="text-sm text-gray-500">
               ({filteredStaff.length} {filteredStaff.length === 1 ? 'member' : 'members'})
+              {hasSelection && (
+                <span className="ml-2 text-blue-600">
+                  ({selectedStaffIds.size} selected)
+                </span>
+              )}
             </span>
           </div>
           <button
@@ -112,6 +145,30 @@ export default function StaffList({ staff, onAddStaff, onEditStaff, onDeleteStaf
       {/* Expandable content */}
       {isExpanded && (
         <div className="px-4 pb-4">
+          {/* Selection controls */}
+          {hasSelection && (
+            <div className="mb-3 flex items-center gap-3 bg-blue-50 p-3 rounded-lg">
+              <span className="text-sm font-medium text-blue-900">
+                {selectedStaffIds.size} staff selected
+              </span>
+              <button
+                onClick={() => {
+                  const allFilteredIds = new Set(filteredStaff.map(s => s.id));
+                  onSelectionChange?.(allFilteredIds);
+                }}
+                className="text-sm px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+              >
+                Select All Filtered
+              </button>
+              <button
+                onClick={() => onSelectionChange?.(new Set())}
+                className="text-sm px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
+              >
+                Clear Selection
+              </button>
+            </div>
+          )}
+
           {/* Filter controls */}
           <div className="mb-4 flex flex-wrap gap-3 items-center">
             {/* Department tabs */}
@@ -171,12 +228,22 @@ export default function StaffList({ staff, onAddStaff, onEditStaff, onDeleteStaf
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
-                {filteredStaff.map((member) => (
-                  <div
-                    key={member.id}
-                    className="flex items-center p-2 border rounded-lg hover:shadow-md transition-all group relative text-sm"
-                    style={{ borderColor: member.color }}
-                  >
+                {filteredStaff.map((member) => {
+                  const isSelected = selectedStaffIds.has(member.id);
+                  return (
+                    <div
+                      key={member.id}
+                      className={`flex items-center p-2 border rounded-lg transition-all group relative text-sm cursor-pointer ${
+                        isSelected 
+                          ? 'shadow-md ring-2 ring-blue-400 bg-blue-50' 
+                          : 'hover:shadow-md'
+                      }`}
+                      style={{ 
+                        borderColor: isSelected ? '#60A5FA' : member.color,
+                        backgroundColor: isSelected ? '#EFF6FF' : undefined
+                      }}
+                      onClick={(e) => handleStaffClick(member.id, e)}
+                    >
                     <div
                       className="w-2.5 h-2.5 rounded-full mr-2 flex-shrink-0"
                       style={{ backgroundColor: member.color }}
@@ -218,8 +285,9 @@ export default function StaffList({ staff, onAddStaff, onEditStaff, onDeleteStaf
                         </svg>
                       </button>
                     </div>
-                  </div>
-                ))}
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>

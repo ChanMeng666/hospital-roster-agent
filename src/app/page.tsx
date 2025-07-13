@@ -38,6 +38,7 @@ export default function Home() {
 
 function MainContent() {
   const [rosterState, setRosterState] = useState<RosterAgentState>(initialRosterState);
+  const [selectedStaffIds, setSelectedStaffIds] = useState<Set<string>>(new Set());
 
   const handleAddStaff = (newStaff: Omit<Staff, "id">) => {
     const staff: Staff = {
@@ -98,12 +99,15 @@ function MainContent() {
           onAddStaff={handleAddStaff}
           onEditStaff={handleEditStaff}
           onDeleteStaff={handleDeleteStaff}
+          selectedStaffIds={selectedStaffIds}
+          onSelectionChange={setSelectedStaffIds}
         />
       </Suspense>
       <Suspense fallback={<div>Loading calendar...</div>}>
         <RosterCalendar 
           rosterState={rosterState}
           onStateChange={setRosterState}
+          selectedStaffIds={selectedStaffIds}
         />
       </Suspense>
     </div>

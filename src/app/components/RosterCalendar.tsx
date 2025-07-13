@@ -11,14 +11,20 @@ import { calendarTheme } from "../utils/calendarTheme";
 interface RosterCalendarProps {
   rosterState: RosterAgentState;
   onStateChange: (state: RosterAgentState) => void;
+  selectedStaffIds?: Set<string>;
 }
 
-export default function RosterCalendar({ rosterState, onStateChange }: RosterCalendarProps) {
+export default function RosterCalendar({ rosterState, onStateChange, selectedStaffIds }: RosterCalendarProps) {
   const calendarRef = useRef<typeof Calendar>(null);
   const [selectedDateRangeText, setSelectedDateRangeText] = useState("");
 
+  // Filter shifts based on selected staff
+  const filteredShifts = selectedStaffIds && selectedStaffIds.size > 0
+    ? rosterState.shifts.filter(shift => selectedStaffIds.has(shift.staffId))
+    : rosterState.shifts;
+
   // Convert shifts to calendar events
-  const events: Partial<EventObject>[] = rosterState.shifts.map(shift => {
+  const events: Partial<EventObject>[] = filteredShifts.map(shift => {
     const staff = rosterState.staff.find(s => s.id === shift.staffId);
     return {
       id: shift.id,
@@ -621,6 +627,9 @@ export default function RosterCalendar({ rosterState, onStateChange }: RosterCal
     updateRenderRangeText();
   }, [rosterState.viewMode, updateRenderRangeText]);
 
+  // Check if filtering is active
+  const isFiltering = selectedStaffIds && selectedStaffIds.size > 0;
+
   return (
     <div className="h-full bg-white">
       <CalendarToolbar
@@ -630,6 +639,18 @@ export default function RosterCalendar({ rosterState, onStateChange }: RosterCal
         onNavigate={handleNavigate}
         dateRangeText={selectedDateRangeText}
       />
+      {isFiltering && (
+        <div className="px-6 py-2 bg-blue-50 border-b border-blue-200">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-blue-900">
+              Showing shifts for {selectedStaffIds.size} selected staff member{selectedStaffIds.size > 1 ? 's' : ''}
+            </span>
+            <span className="text-xs text-blue-700">
+              Click staff cards above to add/remove from filter
+            </span>
+          </div>
+        </div>
+      )}
       <Calendar
         ref={calendarRef}
         height="600px"
