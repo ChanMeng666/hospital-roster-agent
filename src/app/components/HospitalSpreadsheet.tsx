@@ -208,57 +208,124 @@ export default function HospitalSpreadsheet({
     },
   });
 
+  // Function to add a new column
+  const addColumn = () => {
+    const updatedRows = spreadsheet.rows.map(row => [...row, { value: "" }]);
+    setSpreadsheet({
+      ...spreadsheet,
+      rows: updatedRows,
+    });
+  };
+
+  // Function to add a new row
+  const addRow = () => {
+    const numberOfColumns = spreadsheet.rows[0]?.length || 12;
+    const newRow: SpreadsheetRow = Array(numberOfColumns).fill(null).map(() => ({ value: "" }));
+    setSpreadsheet({
+      ...spreadsheet,
+      rows: [...spreadsheet.rows, newRow],
+    });
+  };
+
   return (
-    <div className="bg-white h-full flex flex-col">
-      <div className="p-6 border-b">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-            <h2 className="text-xl font-semibold">Spreadsheet Editor</h2>
-            <select
-              value={selectedSpreadsheetIndex}
-              onChange={(e) => setSelectedSpreadsheetIndex(parseInt(e.target.value))}
-              className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 transition-colors"
-              style={{ 
-                borderColor: "var(--brand-primary)",
-                focusBorderColor: "var(--brand-primary)"
-              }}
-            >
-              {spreadsheets.map((sheet, index) => (
-                <option key={index} value={index}>
-                  {sheet.title}
-                </option>
-              ))}
-            </select>
-          </div>
+    <div className="bg-gray-50 h-full flex flex-col">
+      <div className="bg-white p-6 border-b">
+        <div className="flex items-center justify-between">
+          <input
+            type="text"
+            value={spreadsheet.title}
+            onChange={(e) => {
+              const updatedSpreadsheets = [...spreadsheets];
+              updatedSpreadsheets[selectedSpreadsheetIndex] = {
+                ...spreadsheet,
+                title: e.target.value,
+              };
+              setSpreadsheets(updatedSpreadsheets);
+            }}
+            className="text-xl font-semibold bg-transparent border-none outline-none focus:border-b-2 transition-colors"
+            style={{ borderColor: "var(--brand-primary)" }}
+          />
           <div className="text-sm text-gray-500">
             {spreadsheet.rows.length} rows × {spreadsheet.rows[0]?.length || 0} columns
           </div>
         </div>
       </div>
 
-      <div className="flex-1 p-6 overflow-hidden">
-        <div className="h-full flex flex-col">
-          <div className="flex-1 border rounded-lg overflow-auto">
-            <Spreadsheet
-              data={spreadsheet.rows}
-              onChange={(data) => {
-                setSpreadsheet({
-                  ...spreadsheet,
-                  rows: data as SpreadsheetRow[],
-                });
-              }}
-              columnLabels={["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"]}
-            />
+      <div className="flex-1 p-6 overflow-auto">
+        <div className="flex items-start">
+          <div className="flex-1 overflow-auto">
+            <div className="inline-block">
+              <Spreadsheet
+                data={spreadsheet.rows}
+                onChange={(data) => {
+                  setSpreadsheet({
+                    ...spreadsheet,
+                    rows: data as SpreadsheetRow[],
+                  });
+                }}
+                columnLabels={["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"]}
+              />
+              <button
+                onClick={addRow}
+                className="w-full py-2 mt-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors flex items-center justify-center"
+                style={{ height: "36px" }}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+              </button>
+            </div>
           </div>
+          <button
+            onClick={addColumn}
+            className="ml-2 px-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors flex items-center justify-center"
+            style={{ width: "36px", height: "36px" }}
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+          </button>
+        </div>
+      </div>
 
-          <div className="mt-4 text-sm text-gray-600 border-t pt-4">
-            <p className="font-medium mb-2">💡 Tips:</p>
-            <ul className="list-disc list-inside ml-4 space-y-1">
-              <li>Click any cell to edit its value</li>
-              <li>Use Tab or Enter to navigate between cells</li>
-              <li>Ask the AI assistant to help with roster calculations or schedule optimization</li>
-            </ul>
-          </div>
+      {/* Spreadsheet tabs at bottom */}
+      <div className="bg-white border-t shadow-lg">
+        <div className="flex items-center gap-2 p-3 overflow-x-auto">
+          {spreadsheets.map((sheet, index) => (
+            <button
+              key={index}
+              onClick={() => setSelectedSpreadsheetIndex(index)}
+              className={`px-4 py-2 rounded-lg transition-colors whitespace-nowrap font-medium ${
+                selectedSpreadsheetIndex === index
+                  ? "text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+              style={
+                selectedSpreadsheetIndex === index
+                  ? { backgroundColor: "var(--brand-tertiary)" }
+                  : {}
+              }
+            >
+              {sheet.title}
+            </button>
+          ))}
+          <button
+            onClick={() => {
+              const newSpreadsheet: SpreadsheetData = {
+                title: `New Roster ${spreadsheets.length + 1}`,
+                rows: [
+                  Array(12).fill(null).map(() => ({ value: "" }))
+                ],
+              };
+              setSpreadsheets([...spreadsheets, newSpreadsheet]);
+              setSelectedSpreadsheetIndex(spreadsheets.length);
+            }}
+            className="px-3 py-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+          </button>
         </div>
       </div>
     </div>

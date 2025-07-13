@@ -147,19 +147,21 @@ input[type="checkbox"] {
 
 /* React Spreadsheet Responsive Styles */
 .spreadsheet {
-  width: 100% !important;
   font-size: 14px;
+  display: inline-block;
+  min-width: 100%;
 }
 
 .spreadsheet table {
-  width: 100% !important;
   min-width: 600px;
+  border-collapse: collapse;
 }
 
 .spreadsheet th,
 .spreadsheet td {
   padding: 8px 12px !important;
   border: 1px solid #e5e7eb !important;
+  min-width: 80px;
 }
 
 .spreadsheet th {
@@ -171,9 +173,14 @@ input[type="checkbox"] {
   z-index: 10;
 }
 
+.spreadsheet tbody tr:first-child td {
+  border-top: 2px solid #e5e7eb !important;
+}
+
 .spreadsheet td.active {
   border: 2px solid var(--brand-primary) !important;
   outline: none !important;
+  box-shadow: 0 0 0 1px var(--brand-primary-light);
 }
 
 .spreadsheet input {
@@ -183,6 +190,24 @@ input[type="checkbox"] {
   outline: none !important;
   width: 100% !important;
   padding: 0 !important;
+  font-size: inherit;
+  font-family: inherit;
+}
+
+/* Add row/column buttons hover effect */
+.spreadsheet-add-btn:hover {
+  background-color: var(--brand-primary-light) !important;
+  color: var(--brand-primary) !important;
+}
+
+/* Fixed bottom tabs for spreadsheets */
+.spreadsheet-tabs {
+  z-index: 50;
+}
+
+/* Ensure content doesn't overlap with fixed tabs */
+.calendar-container {
+  padding-bottom: 0;
 }
 
 /* Responsive adjustments */
@@ -194,5 +219,6 @@ input[type="checkbox"] {
   .spreadsheet th,
   .spreadsheet td {
     padding: 6px 8px !important;
+    min-width: 60px;
   }
 }

@@ -32,22 +32,24 @@ function SpreadsheetContent() {
   const [selectedSpreadsheetIndex, setSelectedSpreadsheetIndex] = useState(0);
 
   return (
-    <div className="calendar-container">
+    <div className="calendar-container" style={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <Navigation currentPage="spreadsheet" />
-      <HospitalSpreadsheet
-        spreadsheets={spreadsheets}
-        selectedSpreadsheetIndex={selectedSpreadsheetIndex}
-        setSelectedSpreadsheetIndex={setSelectedSpreadsheetIndex}
-        spreadsheet={spreadsheets[selectedSpreadsheetIndex]}
-        setSpreadsheet={(spreadsheet) => {
-          setSpreadsheets((prev) => {
-            const newSpreadsheets = [...prev];
-            newSpreadsheets[selectedSpreadsheetIndex] = spreadsheet;
-            return newSpreadsheets;
-          });
-        }}
-        setSpreadsheets={setSpreadsheets}
-      />
+      <div style={{ flex: 1, overflow: "hidden" }}>
+        <HospitalSpreadsheet
+          spreadsheets={spreadsheets}
+          selectedSpreadsheetIndex={selectedSpreadsheetIndex}
+          setSelectedSpreadsheetIndex={setSelectedSpreadsheetIndex}
+          spreadsheet={spreadsheets[selectedSpreadsheetIndex]}
+          setSpreadsheet={(spreadsheet) => {
+            setSpreadsheets((prev) => {
+              const newSpreadsheets = [...prev];
+              newSpreadsheets[selectedSpreadsheetIndex] = spreadsheet;
+              return newSpreadsheets;
+            });
+          }}
+          setSpreadsheets={setSpreadsheets}
+        />
+      </div>
     </div>
   );
 }
