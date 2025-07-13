@@ -35,6 +35,6 @@ body {
 
 .calendar-container {
   flex: 1;
-  padding: 20px;
   overflow-y: auto;
+  background-color: #f3f4f6;
 }

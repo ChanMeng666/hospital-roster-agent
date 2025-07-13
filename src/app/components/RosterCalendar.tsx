@@ -621,7 +621,7 @@ export default function RosterCalendar({ rosterState, onStateChange }: RosterCal
   }, [rosterState.viewMode, updateRenderRangeText]);
 
   return (
-    <div className="h-full">
+    <div className="h-full bg-white">
       <CalendarToolbar
         currentDate={rosterState.selectedDate}
         viewMode={rosterState.viewMode}
@@ -629,7 +629,8 @@ export default function RosterCalendar({ rosterState, onStateChange }: RosterCal
         onNavigate={handleNavigate}
         dateRangeText={selectedDateRangeText}
       />
-      <Calendar
+      <div className="p-6">
+        <Calendar
         ref={calendarRef}
         height="600px"
         view={rosterState.viewMode}
@@ -651,6 +652,7 @@ export default function RosterCalendar({ rosterState, onStateChange }: RosterCal
         onBeforeDeleteEvent={onBeforeDeleteEvent}
         onBeforeUpdateEvent={onBeforeUpdateEvent}
       />
+      </div>
     </div>
   );
 }

@@ -14,7 +14,7 @@ export default function StaffList({ staff, onAddStaff, onEditStaff, onDeleteStaf
   const [editingStaff, setEditingStaff] = useState<Staff | undefined>();
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
   return (
-    <div className="mb-6 bg-white rounded-lg shadow p-4">
+    <div className="bg-white p-6 border-b">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Staff Members</h2>
         <button

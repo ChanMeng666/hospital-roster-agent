@@ -82,7 +82,7 @@ function MainContent() {
 
   return (
     <div className="calendar-container">
-      <h1 className="text-3xl font-bold mb-6">Hospital Staff Roster</h1>
+      <h1 className="text-3xl font-bold p-6 bg-white border-b">Hospital Staff Roster</h1>
       <StaffList 
         staff={rosterState.staff}
         onAddStaff={handleAddStaff}
