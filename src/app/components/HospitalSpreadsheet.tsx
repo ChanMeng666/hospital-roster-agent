@@ -234,6 +234,229 @@ export default function HospitalSpreadsheet({
     });
   };
 
+  // Function to delete a row
+  const deleteRow = (rowIndex: number) => {
+    if (spreadsheet.rows.length > 1) {
+      const updatedRows = [...spreadsheet.rows];
+      updatedRows.splice(rowIndex, 1);
+      setSpreadsheet({
+        ...spreadsheet,
+        rows: updatedRows,
+      });
+    }
+  };
+
+  // Function to delete a column
+  const deleteColumn = (columnIndex: number) => {
+    if (spreadsheet.rows[0]?.length > 1) {
+      const updatedRows = spreadsheet.rows.map(row => {
+        const newRow = [...row];
+        newRow.splice(columnIndex, 1);
+        return newRow;
+      });
+      setSpreadsheet({
+        ...spreadsheet,
+        rows: updatedRows,
+      });
+    }
+  };
+
+  // AI Action: Add empty row
+  useCopilotAction({
+    name: "addEmptyRow",
+    description: "Add an empty row to the current spreadsheet",
+    parameters: [
+      {
+        name: "position",
+        type: "string",
+        description: "Where to add the row: 'end' (default) or specific row number",
+        required: false,
+      },
+    ],
+    handler: ({ position }) => {
+      const numberOfColumns = spreadsheet.rows[0]?.length || 12;
+      const newRow: SpreadsheetRow = [];
+      for (let i = 0; i < numberOfColumns; i++) {
+        newRow.push({ value: "" });
+      }
+      
+      if (position && position !== "end" && !isNaN(parseInt(position))) {
+        const index = parseInt(position);
+        const updatedRows = [...spreadsheet.rows];
+        updatedRows.splice(index, 0, newRow);
+        setSpreadsheet({
+          ...spreadsheet,
+          rows: updatedRows,
+        });
+      } else {
+        setSpreadsheet({
+          ...spreadsheet,
+          rows: [...spreadsheet.rows, newRow],
+        });
+      }
+    },
+  });
+
+  // AI Action: Add empty column
+  useCopilotAction({
+    name: "addEmptyColumn",
+    description: "Add an empty column to the current spreadsheet",
+    parameters: [
+      {
+        name: "columnHeader",
+        type: "string",
+        description: "Optional header for the new column",
+        required: false,
+      },
+    ],
+    handler: ({ columnHeader }) => {
+      const spreadsheetRows = [...spreadsheet.rows];
+      for (let i = 0; i < spreadsheetRows.length; i++) {
+        if (i === 0 && columnHeader) {
+          spreadsheetRows[i].push({ value: columnHeader });
+        } else {
+          spreadsheetRows[i].push({ value: "" });
+        }
+      }
+      setSpreadsheet({
+        ...spreadsheet,
+        rows: spreadsheetRows,
+      });
+    },
+  });
+
+  // AI Action: Delete row
+  useCopilotAction({
+    name: "deleteRow",
+    description: "Delete a row from the current spreadsheet",
+    parameters: [
+      {
+        name: "rowNumber",
+        type: "number",
+        description: "The row number to delete (1-based index)",
+        required: true,
+      },
+    ],
+    handler: ({ rowNumber }) => {
+      if (rowNumber > 0 && rowNumber <= spreadsheet.rows.length) {
+        const updatedRows = [...spreadsheet.rows];
+        updatedRows.splice(rowNumber - 1, 1);
+        setSpreadsheet({
+          ...spreadsheet,
+          rows: updatedRows,
+        });
+      }
+    },
+  });
+
+  // AI Action: Delete column
+  useCopilotAction({
+    name: "deleteColumn",
+    description: "Delete a column from the current spreadsheet",
+    parameters: [
+      {
+        name: "columnNumber",
+        type: "number",
+        description: "The column number to delete (1-based index)",
+        required: true,
+      },
+    ],
+    handler: ({ columnNumber }) => {
+      if (columnNumber > 0 && columnNumber <= (spreadsheet.rows[0]?.length || 0)) {
+        const updatedRows = spreadsheet.rows.map(row => {
+          const newRow = [...row];
+          newRow.splice(columnNumber - 1, 1);
+          return newRow;
+        });
+        setSpreadsheet({
+          ...spreadsheet,
+          rows: updatedRows,
+        });
+      }
+    },
+  });
+
+  // AI Action: Switch spreadsheet
+  useCopilotAction({
+    name: "switchSpreadsheet",
+    description: "Switch to a different spreadsheet",
+    parameters: [
+      {
+        name: "spreadsheetName",
+        type: "string",
+        description: "The name of the spreadsheet to switch to",
+        required: true,
+      },
+    ],
+    handler: ({ spreadsheetName }) => {
+      const index = spreadsheets.findIndex(s => 
+        s.title.toLowerCase().includes(spreadsheetName.toLowerCase())
+      );
+      if (index !== -1) {
+        setSelectedSpreadsheetIndex(index);
+      }
+    },
+  });
+
+  // AI Action: Rename spreadsheet
+  useCopilotAction({
+    name: "renameSpreadsheet",
+    description: "Rename the current spreadsheet",
+    parameters: [
+      {
+        name: "newTitle",
+        type: "string",
+        description: "The new title for the spreadsheet",
+        required: true,
+      },
+    ],
+    handler: ({ newTitle }) => {
+      const updatedSpreadsheets = [...spreadsheets];
+      updatedSpreadsheets[selectedSpreadsheetIndex] = {
+        ...spreadsheet,
+        title: newTitle,
+      };
+      setSpreadsheets(updatedSpreadsheets);
+    },
+  });
+
+  // AI Action: Delete spreadsheet
+  useCopilotAction({
+    name: "deleteSpreadsheet",
+    description: "Delete a spreadsheet",
+    parameters: [
+      {
+        name: "spreadsheetName",
+        type: "string",
+        description: "The name of the spreadsheet to delete (or 'current' for current spreadsheet)",
+        required: true,
+      },
+    ],
+    handler: ({ spreadsheetName }) => {
+      if (spreadsheets.length <= 1) {
+        console.log("Cannot delete the last spreadsheet");
+        return;
+      }
+
+      let indexToDelete = selectedSpreadsheetIndex;
+      if (spreadsheetName !== "current") {
+        indexToDelete = spreadsheets.findIndex(s => 
+          s.title.toLowerCase().includes(spreadsheetName.toLowerCase())
+        );
+      }
+
+      if (indexToDelete !== -1) {
+        const updatedSpreadsheets = spreadsheets.filter((_, index) => index !== indexToDelete);
+        setSpreadsheets(updatedSpreadsheets);
+        
+        // Adjust selected index if needed
+        if (selectedSpreadsheetIndex >= updatedSpreadsheets.length) {
+          setSelectedSpreadsheetIndex(updatedSpreadsheets.length - 1);
+        }
+      }
+    },
+  });
+
   return (
     <div className="bg-gray-50 h-full flex flex-col">
       <div className="bg-white p-6 border-b">
@@ -262,13 +485,49 @@ export default function HospitalSpreadsheet({
         <div className="inline-flex">
           <div className="flex flex-col">
             <div className="flex">
-              <div className="inline-block">
+              <div className="inline-block relative">
                 <Spreadsheet
                   data={spreadsheet.rows}
                   onChange={(data) => {
                     setSpreadsheet({ ...spreadsheet, rows: data as any });
                   }}
                 />
+                {/* Row delete buttons */}
+                <div className="absolute" style={{ right: "-40px", top: "0" }}>
+                  {spreadsheet.rows.map((_, index) => (
+                    <div key={index} style={{ height: "33px", display: "flex", alignItems: "center" }}>
+                      {spreadsheet.rows.length > 1 && (
+                        <button
+                          onClick={() => deleteRow(index)}
+                          className="px-1 py-1 text-red-500 hover:text-red-700 rounded transition-colors"
+                          title="Delete row"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                {/* Column delete buttons */}
+                <div className="absolute flex" style={{ bottom: "-32px", left: "0" }}>
+                  {spreadsheet.rows[0]?.map((_, index) => (
+                    <div key={index} style={{ width: "80px", display: "flex", justifyContent: "center" }}>
+                      {spreadsheet.rows[0].length > 1 && (
+                        <button
+                          onClick={() => deleteColumn(index)}
+                          className="px-1 py-1 text-red-500 hover:text-red-700 rounded transition-colors"
+                          title="Delete column"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
               <button
                 onClick={addColumn}
@@ -294,7 +553,7 @@ export default function HospitalSpreadsheet({
             </div>
             <button
               onClick={addRow}
-              className="w-full py-2 mt-2 text-gray-500 hover:text-gray-700 rounded transition-colors flex items-center justify-center"
+              className="w-full py-2 mt-12 text-gray-500 hover:text-gray-700 rounded transition-colors flex items-center justify-center"
               style={{ height: "36px" }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = "var(--brand-primary-light)";
