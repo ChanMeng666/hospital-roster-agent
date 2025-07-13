@@ -211,6 +211,273 @@ export default function RosterCalendar({ rosterState, onStateChange }: RosterCal
     },
   });
 
+  // AI Action: Update shift
+  useCopilotAction({
+    name: "updateShift",
+    description: "Update an existing shift's details",
+    parameters: [
+      {
+        name: "shiftId",
+        type: "string",
+        description: "ID of the shift to update",
+        required: true,
+      },
+      {
+        name: "date",
+        type: "string",
+        description: "New date for the shift (YYYY-MM-DD), optional",
+        required: false,
+      },
+      {
+        name: "startTime",
+        type: "string",
+        description: "New start time (HH:MM), optional",
+        required: false,
+      },
+      {
+        name: "endTime",
+        type: "string",
+        description: "New end time (HH:MM), optional",
+        required: false,
+      },
+      {
+        name: "shiftType",
+        type: "string",
+        description: "New shift type: Morning, Afternoon, Night, or On-Call, optional",
+        required: false,
+      },
+      {
+        name: "staffId",
+        type: "string",
+        description: "New staff member ID for the shift, optional",
+        required: false,
+      },
+    ],
+    handler: ({ shiftId, date, startTime, endTime, shiftType, staffId }) => {
+      const shift = rosterState.shifts.find(s => s.id === shiftId);
+      if (!shift) return;
+
+      let newStart = shift.start;
+      let newEnd = shift.end;
+
+      if (date || startTime) {
+        const baseDate = date ? new Date(date) : new Date(shift.start);
+        if (startTime) {
+          const [hour, min] = startTime.split(":").map(Number);
+          baseDate.setHours(hour, min, 0, 0);
+        }
+        newStart = baseDate;
+      }
+
+      if (date || endTime) {
+        const baseDate = date ? new Date(date) : new Date(shift.end);
+        if (endTime) {
+          const [hour, min] = endTime.split(":").map(Number);
+          baseDate.setHours(hour, min, 0, 0);
+        }
+        newEnd = baseDate;
+      }
+
+      const updatedShift = {
+        ...shift,
+        start: newStart,
+        end: newEnd,
+        type: shiftType as any || shift.type,
+        staffId: staffId || shift.staffId,
+      };
+
+      // Update title if staff changed
+      if (staffId && staffId !== shift.staffId) {
+        const newStaff = rosterState.staff.find(s => s.id === staffId);
+        if (newStaff) {
+          updatedShift.title = `${newStaff.name} - ${updatedShift.type}`;
+        }
+      }
+
+      onStateChange({
+        ...rosterState,
+        shifts: rosterState.shifts.map(s => 
+          s.id === shiftId ? updatedShift : s
+        ),
+      });
+    },
+  });
+
+  // AI Action: Update staff member
+  useCopilotAction({
+    name: "updateStaffMember",
+    description: "Update a staff member's information",
+    parameters: [
+      {
+        name: "staffId",
+        type: "string",
+        description: "ID of the staff member to update",
+        required: true,
+      },
+      {
+        name: "name",
+        type: "string",
+        description: "New name for the staff member, optional",
+        required: false,
+      },
+      {
+        name: "role",
+        type: "string",
+        description: "New role: Doctor, Nurse, or Technician, optional",
+        required: false,
+      },
+      {
+        name: "department",
+        type: "string",
+        description: "New department, optional",
+        required: false,
+      },
+      {
+        name: "color",
+        type: "string",
+        description: "New color code (e.g., #FF5733), optional",
+        required: false,
+      },
+    ],
+    handler: ({ staffId, name, role, department, color }) => {
+      const staff = rosterState.staff.find(s => s.id === staffId);
+      if (!staff) return;
+
+      const updatedStaff = {
+        ...staff,
+        name: name || staff.name,
+        role: (role as any) || staff.role,
+        department: department || staff.department,
+        color: color || staff.color,
+      };
+
+      // Update shifts titles if name changed
+      let updatedShifts = rosterState.shifts;
+      if (name && name !== staff.name) {
+        updatedShifts = rosterState.shifts.map(shift => {
+          if (shift.staffId === staffId) {
+            return {
+              ...shift,
+              title: shift.title.replace(staff.name, name),
+            };
+          }
+          return shift;
+        });
+      }
+
+      onStateChange({
+        ...rosterState,
+        staff: rosterState.staff.map(s => 
+          s.id === staffId ? updatedStaff : s
+        ),
+        shifts: updatedShifts,
+      });
+    },
+  });
+
+  // AI Action: Query shifts
+  useCopilotAction({
+    name: "queryShifts",
+    description: "Query and filter shifts based on criteria",
+    parameters: [
+      {
+        name: "staffId",
+        type: "string",
+        description: "Filter by staff member ID, optional",
+        required: false,
+      },
+      {
+        name: "date",
+        type: "string",
+        description: "Filter by specific date (YYYY-MM-DD), optional",
+        required: false,
+      },
+      {
+        name: "startDate",
+        type: "string",
+        description: "Filter by date range start (YYYY-MM-DD), optional",
+        required: false,
+      },
+      {
+        name: "endDate",
+        type: "string",
+        description: "Filter by date range end (YYYY-MM-DD), optional",
+        required: false,
+      },
+      {
+        name: "shiftType",
+        type: "string",
+        description: "Filter by shift type: Morning, Afternoon, Night, or On-Call, optional",
+        required: false,
+      },
+    ],
+    handler: ({ staffId, date, startDate, endDate, shiftType }) => {
+      let filteredShifts = rosterState.shifts;
+
+      if (staffId) {
+        filteredShifts = filteredShifts.filter(s => s.staffId === staffId);
+      }
+
+      if (date) {
+        const targetDate = new Date(date);
+        filteredShifts = filteredShifts.filter(s => {
+          const shiftDate = new Date(s.start);
+          return shiftDate.toDateString() === targetDate.toDateString();
+        });
+      }
+
+      if (startDate || endDate) {
+        const start = startDate ? new Date(startDate) : new Date(0);
+        const end = endDate ? new Date(endDate) : new Date(9999, 11, 31);
+        filteredShifts = filteredShifts.filter(s => {
+          const shiftDate = new Date(s.start);
+          return shiftDate >= start && shiftDate <= end;
+        });
+      }
+
+      if (shiftType) {
+        filteredShifts = filteredShifts.filter(s => s.type === shiftType);
+      }
+
+      // Return the filtered results as readable data
+      const results = filteredShifts.map(shift => {
+        const staff = rosterState.staff.find(s => s.id === shift.staffId);
+        return {
+          ...shift,
+          staffName: staff?.name,
+          staffRole: staff?.role,
+        };
+      });
+
+      return {
+        count: results.length,
+        shifts: results,
+      };
+    },
+  });
+
+  // AI Action: Change calendar view
+  useCopilotAction({
+    name: "changeCalendarView",
+    description: "Change the calendar view mode",
+    parameters: [
+      {
+        name: "viewMode",
+        type: "string",
+        description: "View mode: month, week, or day",
+        required: true,
+      },
+    ],
+    handler: ({ viewMode }) => {
+      if (["month", "week", "day"].includes(viewMode)) {
+        onStateChange({
+          ...rosterState,
+          viewMode: viewMode as any,
+        });
+      }
+    },
+  });
+
   // Handle calendar events
   const onBeforeCreateEvent = useCallback((eventData: any) => {
     const event = {

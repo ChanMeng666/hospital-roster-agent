@@ -5,7 +5,7 @@ import "@copilotkit/react-ui/styles.css";
 import "@toast-ui/calendar/dist/toastui-calendar.min.css";
 import RosterCalendar from "./components/RosterCalendar";
 import StaffList from "./components/StaffList";
-import { RosterAgentState } from "./types/roster";
+import { RosterAgentState, Staff } from "./types/roster";
 import { initialRosterState } from "./data/mockData";
 import { useState } from "react";
 
@@ -32,10 +32,63 @@ export default function Home() {
 function MainContent() {
   const [rosterState, setRosterState] = useState<RosterAgentState>(initialRosterState);
 
+  const handleAddStaff = (newStaff: Omit<Staff, "id">) => {
+    const staff: Staff = {
+      ...newStaff,
+      id: `staff-${Date.now()}`,
+    };
+    setRosterState({
+      ...rosterState,
+      staff: [...rosterState.staff, staff],
+    });
+  };
+
+  const handleEditStaff = (updatedStaff: Staff) => {
+    // Update staff info
+    const updatedStaffList = rosterState.staff.map(s =>
+      s.id === updatedStaff.id ? updatedStaff : s
+    );
+
+    // Update shift titles if name changed
+    const oldStaff = rosterState.staff.find(s => s.id === updatedStaff.id);
+    let updatedShifts = rosterState.shifts;
+    
+    if (oldStaff && oldStaff.name !== updatedStaff.name) {
+      updatedShifts = rosterState.shifts.map(shift => {
+        if (shift.staffId === updatedStaff.id) {
+          return {
+            ...shift,
+            title: shift.title.replace(oldStaff.name, updatedStaff.name),
+          };
+        }
+        return shift;
+      });
+    }
+
+    setRosterState({
+      ...rosterState,
+      staff: updatedStaffList,
+      shifts: updatedShifts,
+    });
+  };
+
+  const handleDeleteStaff = (staffId: string) => {
+    setRosterState({
+      ...rosterState,
+      staff: rosterState.staff.filter(s => s.id !== staffId),
+      shifts: rosterState.shifts.filter(shift => shift.staffId !== staffId),
+    });
+  };
+
   return (
     <div className="calendar-container">
       <h1 className="text-3xl font-bold mb-6">Hospital Staff Roster</h1>
-      <StaffList staff={rosterState.staff} />
+      <StaffList 
+        staff={rosterState.staff}
+        onAddStaff={handleAddStaff}
+        onEditStaff={handleEditStaff}
+        onDeleteStaff={handleDeleteStaff}
+      />
       <RosterCalendar 
         rosterState={rosterState}
         onStateChange={setRosterState}
