@@ -497,8 +497,8 @@ export default function RosterCalendar({ rosterState, onStateChange }: RosterCal
         id: event.id,
         staffId: event.calendarId,
         title: `${staff.name} - Custom Shift`,
-        start: event.start,
-        end: event.end,
+        start: new Date(event.start),
+        end: new Date(event.end),
         type: "Morning" as const,
         department: staff.department,
       };
@@ -604,8 +604,8 @@ export default function RosterCalendar({ rosterState, onStateChange }: RosterCal
 
     const updatedShift = {
       ...shift,
-      start: changes.start || shift.start,
-      end: changes.end || shift.end,
+      start: changes.start ? new Date(changes.start) : shift.start,
+      end: changes.end ? new Date(changes.end) : shift.end,
     };
 
     onStateChange({
