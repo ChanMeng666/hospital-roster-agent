@@ -211,10 +211,12 @@ export default function HospitalSpreadsheet({
   // Function to add a new column
   const addColumn = () => {
     const updatedRows = spreadsheet.rows.map(row => [...row, { value: "" }]);
-    setSpreadsheet({
+    const updatedSpreadsheets = [...spreadsheets];
+    updatedSpreadsheets[selectedSpreadsheetIndex] = {
       ...spreadsheet,
       rows: updatedRows,
-    });
+    };
+    setSpreadsheets(updatedSpreadsheets);
   };
 
   // Function to add a new row
@@ -252,39 +254,41 @@ export default function HospitalSpreadsheet({
       </div>
 
       <div className="flex-1 p-6 overflow-auto">
-        <div className="flex items-start">
-          <div className="flex-1 overflow-auto">
-            <div className="inline-block">
-              <Spreadsheet
-                data={spreadsheet.rows}
-                onChange={(data) => {
-                  setSpreadsheet({
-                    ...spreadsheet,
-                    rows: data as SpreadsheetRow[],
-                  });
-                }}
-                columnLabels={["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"]}
-              />
+        <div className="inline-flex">
+          <div className="flex flex-col">
+            <div className="flex">
+              <div className="inline-block">
+                <Spreadsheet
+                  data={spreadsheet.rows}
+                  onChange={(data) => {
+                    setSpreadsheet({
+                      ...spreadsheet,
+                      rows: data as SpreadsheetRow[],
+                    });
+                  }}
+                  columnLabels={["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"]}
+                />
+              </div>
               <button
-                onClick={addRow}
-                className="w-full py-2 mt-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors flex items-center justify-center"
-                style={{ height: "36px" }}
+                onClick={addColumn}
+                className="ml-2 px-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors flex items-center justify-center spreadsheet-add-column-btn"
+                style={{ width: "36px", alignSelf: "stretch" }}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
               </button>
             </div>
+            <button
+              onClick={addRow}
+              className="w-full py-2 mt-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors flex items-center justify-center"
+              style={{ height: "36px" }}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+            </button>
           </div>
-          <button
-            onClick={addColumn}
-            className="ml-2 px-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors flex items-center justify-center"
-            style={{ width: "36px", height: "36px" }}
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-          </button>
         </div>
       </div>
 
