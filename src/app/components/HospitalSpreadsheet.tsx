@@ -105,9 +105,9 @@ export default function HospitalSpreadsheet({
     ],
     render: (props) => {
       const { rows, title } = props.args;
-      const newRows = rows.map((row: any) => 
+      const newRows = rows ? rows.map((row: any) => 
         row.cells ? row.cells : row.map((cell: any) => ({ value: cell.value || "" }))
-      );
+      ) : [];
 
       return (
         <PreviewSpreadsheetChanges
@@ -157,9 +157,9 @@ export default function HospitalSpreadsheet({
     ],
     render: (props) => {
       const { rows } = props.args;
-      const newRows = rows.map((row: any) => 
+      const newRows = rows ? rows.map((row: any) => 
         row.cells ? row.cells : row.map((cell: any) => ({ value: cell.value || "" }))
-      );
+      ) : [];
 
       return (
         <PreviewSpreadsheetChanges
