@@ -1,9 +1,11 @@
 "use client";
-import React, { useRef, useEffect, useCallback } from "react";
+import React, { useRef, useEffect, useCallback, useState } from "react";
 import Calendar from "@toast-ui/react-calendar";
-import { EventObject, Options } from "@toast-ui/calendar";
+import { EventObject, Options, ExternalEventTypes } from "@toast-ui/calendar";
 import { RosterAgentState } from "../types/roster";
 import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
+import CalendarToolbar from "./CalendarToolbar";
+import { calendarTemplates } from "../utils/calendarTemplates";
 
 interface RosterCalendarProps {
   rosterState: RosterAgentState;
@@ -12,6 +14,7 @@ interface RosterCalendarProps {
 
 export default function RosterCalendar({ rosterState, onStateChange }: RosterCalendarProps) {
   const calendarRef = useRef<typeof Calendar>(null);
+  const [selectedDateRangeText, setSelectedDateRangeText] = useState("");
 
   // Convert shifts to calendar events
   const events: Partial<EventObject>[] = rosterState.shifts.map(shift => {
@@ -247,8 +250,118 @@ export default function RosterCalendar({ rosterState, onStateChange }: RosterCal
     });
   }, [rosterState, onStateChange]);
 
+  // Get calendar instance
+  const getCalInstance = useCallback(() => {
+    // @ts-ignore
+    return calendarRef.current?.getInstance?.();
+  }, []);
+
+  // Update date range text
+  const updateRenderRangeText = useCallback(() => {
+    const calInstance = getCalInstance();
+    if (!calInstance) {
+      setSelectedDateRangeText("");
+      return;
+    }
+
+    const viewName = calInstance.getViewName();
+    const calDate = calInstance.getDate();
+    const rangeStart = calInstance.getDateRangeStart();
+    const rangeEnd = calInstance.getDateRangeEnd();
+
+    let year = calDate.getFullYear();
+    let month = calDate.getMonth() + 1;
+    let date = calDate.getDate();
+    let dateRangeText: string;
+
+    switch (viewName) {
+      case "month": {
+        dateRangeText = `${year}-${month < 10 ? "0" : ""}${month}`;
+        break;
+      }
+      case "week": {
+        year = rangeStart.getFullYear();
+        month = rangeStart.getMonth() + 1;
+        date = rangeStart.getDate();
+        const endMonth = rangeEnd.getMonth() + 1;
+        const endDate = rangeEnd.getDate();
+
+        const start = `${year}-${month < 10 ? "0" : ""}${month}-${date < 10 ? "0" : ""}${date}`;
+        const end = `${year}-${endMonth < 10 ? "0" : ""}${endMonth}-${
+          endDate < 10 ? "0" : ""
+        }${endDate}`;
+        dateRangeText = `${start} ~ ${end}`;
+        break;
+      }
+      default:
+        dateRangeText = `${year}-${month < 10 ? "0" : ""}${month}-${date < 10 ? "0" : ""}${date}`;
+    }
+
+    setSelectedDateRangeText(dateRangeText);
+  }, [getCalInstance]);
+
+  // Handle navigation
+  const handleNavigate = useCallback((action: "today" | "prev" | "next") => {
+    const calInstance = getCalInstance();
+    if (!calInstance) return;
+
+    switch (action) {
+      case "today":
+        calInstance.today();
+        break;
+      case "prev":
+        calInstance.prev();
+        break;
+      case "next":
+        calInstance.next();
+        break;
+    }
+    updateRenderRangeText();
+  }, [getCalInstance, updateRenderRangeText]);
+
+  // Handle view mode change
+  const handleViewModeChange = useCallback((viewMode: "month" | "week" | "day") => {
+    onStateChange({
+      ...rosterState,
+      viewMode,
+    });
+  }, [rosterState, onStateChange]);
+
+  // Handle event update (drag & drop, resize)
+  const onBeforeUpdateEvent: ExternalEventTypes["beforeUpdateEvent"] = useCallback((updateData) => {
+    const { event, changes } = updateData;
+    
+    const shift = rosterState.shifts.find(s => s.id === event.id);
+    if (!shift) return;
+
+    const updatedShift = {
+      ...shift,
+      start: changes.start || shift.start,
+      end: changes.end || shift.end,
+    };
+
+    onStateChange({
+      ...rosterState,
+      shifts: rosterState.shifts.map(s => 
+        s.id === shift.id ? updatedShift : s
+      ),
+    });
+  }, [rosterState, onStateChange]);
+
+  // Update date range text when view or date changes
+  useEffect(() => {
+    updateRenderRangeText();
+  }, [rosterState.viewMode, updateRenderRangeText]);
+
   return (
     <div className="h-full">
+      <CalendarToolbar
+        currentDate={rosterState.selectedDate}
+        viewMode={rosterState.viewMode}
+        onViewModeChange={handleViewModeChange}
+        onNavigate={handleNavigate}
+        dateRangeText={selectedDateRangeText}
+      />
       <Calendar
         ref={calendarRef}
         height="600px"
@@ -264,8 +377,12 @@ export default function RosterCalendar({ rosterState, onStateChange }: RosterCal
         events={events}
         useFormPopup={true}
         useDetailPopup={true}
+        isReadOnly={false}
+        usageStatistics={false}
+        template={calendarTemplates}
         onBeforeCreateEvent={onBeforeCreateEvent}
         onBeforeDeleteEvent={onBeforeDeleteEvent}
+        onBeforeUpdateEvent={onBeforeUpdateEvent}
       />
     </div>
   );
