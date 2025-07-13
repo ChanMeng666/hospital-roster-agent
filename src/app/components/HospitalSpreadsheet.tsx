@@ -578,12 +578,17 @@ export default function HospitalSpreadsheet({
                 </div>
                 
                 {/* Row numbers and hover delete buttons */}
-                <div className="absolute" style={{ left: "-40px", top: "0" }}>
+                <div className="absolute" style={{ left: "-42px", top: "0" }}>
                   {spreadsheet.rows.map((_, index) => (
                     <div 
                       key={index} 
                       className="spreadsheet-row-area flex items-center justify-center gap-1 px-1 rounded transition-colors duration-150"
-                      style={{ height: "33px", width: "38px" }}
+                      style={{ 
+                        // 1.9em height + 8px padding (4px top + 4px bottom) + 2px border = total height
+                        height: "calc(1.9em + 10px)",
+                        lineHeight: "calc(1.9em + 10px)", // Ensure vertical centering
+                        width: "40px" 
+                      }}
                       onMouseEnter={() => setHoveredRow(index)}
                       onMouseLeave={() => setHoveredRow(null)}
                       onContextMenu={(e) => {
@@ -617,21 +622,26 @@ export default function HospitalSpreadsheet({
                   ))}
                 </div>
                 
-                {/* Column letters and hover delete buttons - dynamically positioned */}
-                <div className="absolute" style={{ bottom: "-30px", left: "0" }}>
+                {/* Column letters and hover delete buttons - with improved spacing */}
+                <div 
+                  className="absolute flex" 
+                  style={{ 
+                    bottom: "-35px", 
+                    left: "0",
+                    marginBottom: "45px" // Add space between column controls and add row button
+                  }}
+                >
                   {spreadsheet.rows[0]?.map((_, index) => {
-                    // Calculate column position dynamically
-                    const columnWidth = 80; // Match the min-width in CSS
-                    const leftPosition = index * columnWidth;
+                    // Use fixed width matching the CSS
+                    const columnWidth = 80; // This should match our CSS min-width
                     
                     return (
                       <div 
                         key={index} 
-                        className="spreadsheet-column-area absolute flex flex-col items-center justify-center gap-1 py-1 rounded transition-colors duration-150"
+                        className="spreadsheet-column-area flex flex-col items-center justify-center gap-1 py-1 rounded transition-colors duration-150"
                         style={{ 
-                          left: `${leftPosition}px`, 
                           width: `${columnWidth}px`, 
-                          height: "28px"
+                          height: "30px"
                         }}
                         onMouseEnter={() => setHoveredColumn(index)}
                         onMouseLeave={() => setHoveredColumn(null)}
@@ -673,7 +683,8 @@ export default function HospitalSpreadsheet({
                 style={{ 
                   width: "36px",
                   alignSelf: "stretch",
-                  minHeight: "100%"
+                  minHeight: "100%",
+                  marginBottom: "80px" // Align with column controls
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = "var(--brand-primary-light)";
@@ -691,8 +702,11 @@ export default function HospitalSpreadsheet({
             </div>
             <button
               onClick={addRow}
-              className="w-full py-2 mt-8 text-gray-500 hover:text-gray-700 rounded transition-colors flex items-center justify-center"
-              style={{ height: "36px" }}
+              className="w-full py-2 text-gray-500 hover:text-gray-700 rounded transition-colors flex items-center justify-center"
+              style={{ 
+                height: "36px",
+                marginTop: "12px" // Add clear separation from spreadsheet
+              }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = "var(--brand-primary-light)";
                 e.currentTarget.style.color = "var(--brand-primary)";

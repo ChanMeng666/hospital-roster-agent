@@ -155,17 +155,22 @@ input[type="checkbox"] {
 .spreadsheet table {
   min-width: 600px;
   border-collapse: collapse;
-  margin-bottom: 35px;
+  table-layout: fixed;
+  margin-bottom: 80px; /* Space for column controls and add row button */
   margin-right: 50px;
-  margin-left: 40px;
+  margin-left: 45px; /* Space for row controls */
 }
 
 .spreadsheet th,
 .spreadsheet td {
-  padding: 8px 12px !important;
+  padding: 4px !important;
   border: 1px solid #e5e7eb !important;
-  min-width: 80px;
+  min-width: 6em;
   width: 80px;
+  height: 1.9em !important;
+  min-height: 1.9em !important;
+  max-height: 1.9em !important;
+  box-sizing: content-box !important;
 }
 
 .spreadsheet th {
@@ -251,6 +256,22 @@ input[type="checkbox"] {
   border: 1px solid transparent;
 }
 
+/* Precise alignment helpers */
+.spreadsheet-row-area {
+  /* Total height = 1.9em + 2*4px padding + 2*1px border = ~33px at 16px font size */
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.spreadsheet-column-area {
+  /* Width should match actual table cell width */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
 /* Delete button animations */
 .delete-button-appear {
   animation: fadeIn 0.2s ease-in-out;
@@ -286,7 +307,14 @@ input[type="checkbox"] {
   }
   
   .spreadsheet table {
-    margin-left: 25px;
-    margin-bottom: 25px;
+    margin-left: 45px;
+    margin-bottom: 80px;
+  }
+  
+  .spreadsheet th,
+  .spreadsheet td {
+    height: 1.7em !important;
+    min-height: 1.7em !important;
+    max-height: 1.7em !important;
   }
 }

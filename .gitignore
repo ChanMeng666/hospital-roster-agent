@@ -54,4 +54,4 @@ logs/
 
 # Package lock files (keep only one)
 pnpm-lock.yaml
-yarn.lock
+yarn.lockreact-spreadsheet/
