@@ -25,6 +25,8 @@ export default function HospitalSpreadsheet({
 }: HospitalSpreadsheetProps) {
   // Function to export spreadsheet data
   const exportSpreadsheet = () => {
+    if (typeof window === 'undefined') return;
+    
     const dataStr = JSON.stringify(spreadsheet, null, 2);
     const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
     
@@ -663,7 +665,7 @@ export default function HospitalSpreadsheet({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (window.confirm(`Are you sure you want to delete "${sheet.title}"?`)) {
+                    if (typeof window !== 'undefined' && window.confirm(`Are you sure you want to delete "${sheet.title}"?`)) {
                       const updatedSpreadsheets = spreadsheets.filter((_, i) => i !== index);
                       setSpreadsheets(updatedSpreadsheets);
                       
