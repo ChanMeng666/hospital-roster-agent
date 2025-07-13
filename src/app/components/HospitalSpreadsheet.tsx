@@ -32,6 +32,7 @@ export default function HospitalSpreadsheet({
     type: 'row' | 'column';
     index: number;
   } | null>(null);
+  const tableRef = React.useRef<HTMLDivElement>(null);
 
   // Function to export spreadsheet data
   const exportSpreadsheet = () => {
@@ -561,7 +562,7 @@ export default function HospitalSpreadsheet({
         <div className="inline-flex">
           <div className="flex flex-col">
             <div className="flex">
-              <div className="inline-block relative">
+              <div className="inline-block relative" ref={tableRef}>
                 <div 
                   onContextMenu={(e) => {
                     e.preventDefault();
