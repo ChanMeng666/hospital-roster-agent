@@ -200,16 +200,6 @@ input[type="checkbox"] {
   color: var(--brand-primary) !important;
 }
 
-/* Add column button - stretch to match table height */
-.spreadsheet-add-column-btn {
-  min-height: 100%;
-  writing-mode: vertical-lr;
-}
-
-.spreadsheet-add-column-btn svg {
-  writing-mode: horizontal-tb;
-}
-
 /* Fixed bottom tabs for spreadsheets */
 .spreadsheet-tabs {
   z-index: 50;
