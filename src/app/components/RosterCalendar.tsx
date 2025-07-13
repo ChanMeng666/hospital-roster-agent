@@ -140,6 +140,74 @@ export default function RosterCalendar({ rosterState, onStateChange }: RosterCal
     },
   });
 
+  // AI Action: Add staff member
+  useCopilotAction({
+    name: "addStaffMember",
+    description: "Add a new staff member to the roster system",
+    parameters: [
+      {
+        name: "name",
+        type: "string",
+        description: "Full name of the staff member",
+        required: true,
+      },
+      {
+        name: "role",
+        type: "string",
+        description: "Role of the staff member: Doctor, Nurse, or Technician",
+        required: true,
+      },
+      {
+        name: "department",
+        type: "string",
+        description: "Department where the staff member works",
+        required: true,
+      },
+      {
+        name: "color",
+        type: "string",
+        description: "Color code for the staff member (e.g., #FF5733)",
+        required: true,
+      },
+    ],
+    handler: ({ name, role, department, color }) => {
+      const newStaff = {
+        id: `staff-${Date.now()}`,
+        name,
+        role: role as "Doctor" | "Nurse" | "Technician",
+        department,
+        color,
+      };
+
+      onStateChange({
+        ...rosterState,
+        staff: [...rosterState.staff, newStaff],
+      });
+    },
+  });
+
+  // AI Action: Remove staff member
+  useCopilotAction({
+    name: "removeStaffMember",
+    description: "Remove a staff member from the roster system",
+    parameters: [
+      {
+        name: "staffId",
+        type: "string",
+        description: "ID of the staff member to remove",
+        required: true,
+      },
+    ],
+    handler: ({ staffId }) => {
+      onStateChange({
+        ...rosterState,
+        staff: rosterState.staff.filter(s => s.id !== staffId),
+        // Also remove all shifts for this staff member
+        shifts: rosterState.shifts.filter(shift => shift.staffId !== staffId),
+      });
+    },
+  });
+
   // Handle calendar events
   const onBeforeCreateEvent = useCallback((eventData: any) => {
     const event = {

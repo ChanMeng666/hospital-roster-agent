@@ -4,6 +4,7 @@ import { CopilotSidebar } from "@copilotkit/react-ui";
 import "@copilotkit/react-ui/styles.css";
 import "@toast-ui/calendar/dist/toastui-calendar.min.css";
 import RosterCalendar from "./components/RosterCalendar";
+import StaffList from "./components/StaffList";
 import { RosterAgentState } from "./types/roster";
 import { initialRosterState } from "./data/mockData";
 import { useState } from "react";
@@ -34,6 +35,7 @@ function MainContent() {
   return (
     <div className="calendar-container">
       <h1 className="text-3xl font-bold mb-6">Hospital Staff Roster</h1>
+      <StaffList staff={rosterState.staff} />
       <RosterCalendar 
         rosterState={rosterState}
         onStateChange={setRosterState}
