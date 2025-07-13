@@ -7,6 +7,7 @@ import "tui-date-picker/dist/tui-date-picker.css";
 import "tui-time-picker/dist/tui-time-picker.css";
 import RosterCalendar from "./components/RosterCalendar";
 import StaffList from "./components/StaffList";
+import Navigation from "./components/Navigation";
 import { RosterAgentState, Staff } from "./types/roster";
 import { initialRosterState } from "./data/mockData";
 import { useState } from "react";
@@ -84,7 +85,7 @@ function MainContent() {
 
   return (
     <div className="calendar-container">
-      <h1 className="text-3xl font-bold p-6 bg-white border-b">Hospital Staff Roster</h1>
+      <Navigation currentPage="calendar" />
       <StaffList 
         staff={rosterState.staff}
         onAddStaff={handleAddStaff}
