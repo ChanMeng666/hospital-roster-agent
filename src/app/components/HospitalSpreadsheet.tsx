@@ -259,38 +259,58 @@ export default function HospitalSpreadsheet({
       </div>
 
       <div className="flex-1 p-6 overflow-auto">
-        <div className="flex items-start">
-          <Spreadsheet
-            data={spreadsheet.rows}
-            onChange={(data) => {
-              setSpreadsheet({ ...spreadsheet, rows: data as any });
-            }}
-          />
-          <button
-            onClick={addColumn}
-            className="ml-3 w-8 h-8 text-white rounded-lg transition-colors flex items-center justify-center font-bold"
-            style={{ 
-              backgroundColor: "var(--brand-primary)",
-              color: "#000"
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--brand-primary-hover)"}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "var(--brand-primary)"}
-          >
-            +
-          </button>
+        <div className="inline-flex">
+          <div className="flex flex-col">
+            <div className="flex">
+              <div className="inline-block">
+                <Spreadsheet
+                  data={spreadsheet.rows}
+                  onChange={(data) => {
+                    setSpreadsheet({ ...spreadsheet, rows: data as any });
+                  }}
+                />
+              </div>
+              <button
+                onClick={addColumn}
+                className="ml-2 px-2 text-gray-500 hover:text-gray-700 rounded transition-colors flex items-center justify-center add-column-btn"
+                style={{ 
+                  width: "36px",
+                  alignSelf: "stretch",
+                  minHeight: "100%"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "var(--brand-primary-light)";
+                  e.currentTarget.style.color = "var(--brand-primary)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.style.color = "#6b7280";
+                }}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+              </button>
+            </div>
+            <button
+              onClick={addRow}
+              className="w-full py-2 mt-2 text-gray-500 hover:text-gray-700 rounded transition-colors flex items-center justify-center"
+              style={{ height: "36px" }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "var(--brand-primary-light)";
+                e.currentTarget.style.color = "var(--brand-primary)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "transparent";
+                e.currentTarget.style.color = "#6b7280";
+              }}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+            </button>
+          </div>
         </div>
-        <button
-          onClick={addRow}
-          className="mt-3 w-8 h-8 text-white rounded-lg transition-colors flex items-center justify-center font-bold"
-          style={{ 
-            backgroundColor: "var(--brand-primary)",
-            color: "#000"
-          }}
-          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--brand-primary-hover)"}
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "var(--brand-primary)"}
-        >
-          +
-        </button>
       </div>
 
       {/* Spreadsheet tabs at bottom */}
