@@ -155,8 +155,9 @@ input[type="checkbox"] {
 .spreadsheet table {
   min-width: 600px;
   border-collapse: collapse;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
   margin-right: 50px;
+  margin-left: 30px;
 }
 
 .spreadsheet th,
@@ -212,6 +213,54 @@ input[type="checkbox"] {
   padding-bottom: 0;
 }
 
+/* Spreadsheet row and column labels */
+.spreadsheet-row-label {
+  font-size: 10px;
+  color: #9ca3af;
+  font-weight: 500;
+  user-select: none;
+  cursor: pointer;
+}
+
+.spreadsheet-column-label {
+  font-size: 10px;
+  color: #9ca3af;
+  font-weight: 500;
+  user-select: none;
+  cursor: pointer;
+}
+
+/* Hover effects for row/column areas */
+.spreadsheet-row-area:hover {
+  background-color: rgba(59, 130, 246, 0.05);
+}
+
+.spreadsheet-column-area:hover {
+  background-color: rgba(59, 130, 246, 0.05);
+}
+
+/* Delete button animations */
+.delete-button-appear {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Context menu improvements */
+.context-menu {
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .spreadsheet {
@@ -222,5 +271,10 @@ input[type="checkbox"] {
   .spreadsheet td {
     padding: 6px 8px !important;
     min-width: 60px;
+  }
+  
+  .spreadsheet table {
+    margin-left: 25px;
+    margin-bottom: 25px;
   }
 }

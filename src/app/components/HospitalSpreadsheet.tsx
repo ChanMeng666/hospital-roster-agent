@@ -23,6 +23,16 @@ export default function HospitalSpreadsheet({
   setSelectedSpreadsheetIndex,
   setSpreadsheets,
 }: HospitalSpreadsheetProps) {
+  const [hoveredRow, setHoveredRow] = React.useState<number | null>(null);
+  const [hoveredColumn, setHoveredColumn] = React.useState<number | null>(null);
+  const [contextMenu, setContextMenu] = React.useState<{
+    show: boolean;
+    x: number;
+    y: number;
+    type: 'row' | 'column';
+    index: number;
+  } | null>(null);
+
   // Function to export spreadsheet data
   const exportSpreadsheet = () => {
     if (typeof window === 'undefined') return;
@@ -552,42 +562,94 @@ export default function HospitalSpreadsheet({
           <div className="flex flex-col">
             <div className="flex">
               <div className="inline-block relative">
-                <Spreadsheet
-                  data={spreadsheet.rows}
-                  onChange={(data) => {
-                    setSpreadsheet({ ...spreadsheet, rows: data as any });
+                <div 
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    setContextMenu(null);
                   }}
-                />
-                {/* Row delete buttons */}
-                <div className="absolute" style={{ right: "-40px", top: "0" }}>
+                  onClick={() => setContextMenu(null)}
+                >
+                  <Spreadsheet
+                    data={spreadsheet.rows}
+                    onChange={(data) => {
+                      setSpreadsheet({ ...spreadsheet, rows: data as any });
+                    }}
+                  />
+                </div>
+                
+                {/* Row numbers and hover delete buttons */}
+                <div className="absolute" style={{ left: "-30px", top: "0" }}>
                   {spreadsheet.rows.map((_, index) => (
-                    <div key={index} style={{ height: "33px", display: "flex", alignItems: "center" }}>
-                      {spreadsheet.rows.length > 1 && (
+                    <div 
+                      key={index} 
+                      className="spreadsheet-row-area flex items-center justify-between px-1 rounded-sm transition-colors duration-150"
+                      style={{ height: "33px", width: "28px" }}
+                      onMouseEnter={() => setHoveredRow(index)}
+                      onMouseLeave={() => setHoveredRow(null)}
+                      onContextMenu={(e) => {
+                        if (spreadsheet.rows.length > 1) {
+                          e.preventDefault();
+                          setContextMenu({
+                            show: true,
+                            x: e.clientX,
+                            y: e.clientY,
+                            type: 'row',
+                            index
+                          });
+                        }
+                      }}
+                    >
+                      <span className="spreadsheet-row-label">
+                        {index + 1}
+                      </span>
+                      {hoveredRow === index && spreadsheet.rows.length > 1 && (
                         <button
                           onClick={() => deleteRow(index)}
-                          className="px-1 py-1 text-red-500 hover:text-red-700 rounded transition-colors"
+                          className="delete-button-appear w-4 h-4 flex items-center justify-center text-red-500 hover:text-red-700 hover:bg-red-50 rounded transition-all duration-200"
                           title="Delete row"
                         >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                           </svg>
                         </button>
                       )}
                     </div>
                   ))}
                 </div>
-                {/* Column delete buttons */}
-                <div className="absolute flex" style={{ bottom: "-32px", left: "0" }}>
+                
+                {/* Column letters and hover delete buttons */}
+                <div className="absolute flex" style={{ bottom: "-25px", left: "0" }}>
                   {spreadsheet.rows[0]?.map((_, index) => (
-                    <div key={index} style={{ width: "80px", display: "flex", justifyContent: "center" }}>
-                      {spreadsheet.rows[0].length > 1 && (
+                    <div 
+                      key={index} 
+                      className="spreadsheet-column-area flex flex-col items-center justify-center py-1 rounded-sm transition-colors duration-150"
+                      style={{ width: "80px", height: "24px" }}
+                      onMouseEnter={() => setHoveredColumn(index)}
+                      onMouseLeave={() => setHoveredColumn(null)}
+                      onContextMenu={(e) => {
+                        if (spreadsheet.rows[0].length > 1) {
+                          e.preventDefault();
+                          setContextMenu({
+                            show: true,
+                            x: e.clientX,
+                            y: e.clientY,
+                            type: 'column',
+                            index
+                          });
+                        }
+                      }}
+                    >
+                      <span className="spreadsheet-column-label">
+                        {String.fromCharCode(65 + index)}
+                      </span>
+                      {hoveredColumn === index && spreadsheet.rows[0].length > 1 && (
                         <button
                           onClick={() => deleteColumn(index)}
-                          className="px-1 py-1 text-red-500 hover:text-red-700 rounded transition-colors"
+                          className="delete-button-appear w-4 h-4 flex items-center justify-center text-red-500 hover:text-red-700 hover:bg-red-50 rounded transition-all duration-200"
                           title="Delete column"
                         >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                           </svg>
                         </button>
                       )}
@@ -619,7 +681,7 @@ export default function HospitalSpreadsheet({
             </div>
             <button
               onClick={addRow}
-              className="w-full py-2 mt-12 text-gray-500 hover:text-gray-700 rounded transition-colors flex items-center justify-center"
+              className="w-full py-2 mt-8 text-gray-500 hover:text-gray-700 rounded transition-colors flex items-center justify-center"
               style={{ height: "36px" }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = "var(--brand-primary-light)";
@@ -637,6 +699,57 @@ export default function HospitalSpreadsheet({
           </div>
         </div>
       </div>
+
+      {/* Context Menu */}
+      {contextMenu && (
+        <>
+          <div 
+            className="fixed inset-0 z-40"
+            onClick={() => setContextMenu(null)}
+          />
+          <div 
+            className="context-menu fixed z-50 bg-white border border-gray-200 rounded-lg shadow-lg py-2 min-w-32"
+            style={{ 
+              left: contextMenu.x, 
+              top: contextMenu.y,
+              transform: 'translate(-50%, -100%)'
+            }}
+          >
+            <button
+              onClick={() => {
+                if (contextMenu.type === 'row') {
+                  deleteRow(contextMenu.index);
+                } else {
+                  deleteColumn(contextMenu.index);
+                }
+                setContextMenu(null);
+              }}
+              className="w-full px-4 py-2 text-left text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              Delete {contextMenu.type}
+            </button>
+            <button
+              onClick={() => {
+                if (contextMenu.type === 'row') {
+                  addRow();
+                } else {
+                  addColumn();
+                }
+                setContextMenu(null);
+              }}
+              className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              Add {contextMenu.type}
+            </button>
+          </div>
+        </>
+      )}
 
       {/* Spreadsheet tabs at bottom */}
       <div className="bg-white border-t shadow-lg">
