@@ -1,7 +1,7 @@
 "use client";
 import React, { useRef, useEffect, useCallback, useState } from "react";
 import Calendar from "@toast-ui/react-calendar";
-import { EventObject, Options, ExternalEventTypes } from "@toast-ui/calendar";
+import { EventObject, Options, ExternalEventTypes, UpdateEventData } from "@toast-ui/calendar";
 import { RosterAgentState } from "../types/roster";
 import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
 import CalendarToolbar from "./CalendarToolbar";
@@ -596,7 +596,7 @@ export default function RosterCalendar({ rosterState, onStateChange }: RosterCal
   }, [rosterState, onStateChange]);
 
   // Handle event update (drag & drop, resize)
-  const onBeforeUpdateEvent: ExternalEventTypes["beforeUpdateEvent"] = useCallback((updateData) => {
+  const onBeforeUpdateEvent: ExternalEventTypes["beforeUpdateEvent"] = useCallback((updateData: UpdateEventData) => {
     const { event, changes } = updateData;
     
     const shift = rosterState.shifts.find(s => s.id === event.id);

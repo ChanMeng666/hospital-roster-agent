@@ -46,9 +46,14 @@ declare module '@toast-ui/calendar' {
     gridSelection?: boolean;
   }
 
+  export interface UpdateEventData {
+    event: EventObject;
+    changes: Partial<EventObject>;
+  }
+
   export interface ExternalEventTypes {
     beforeCreateEvent?: (event: any) => void;
-    beforeUpdateEvent?: (event: any) => void;
+    beforeUpdateEvent?: (updateData: UpdateEventData) => void;
     beforeDeleteEvent?: (event: any) => void;
     afterRenderEvent?: (event: any) => void;
     clickEvent?: (event: any) => void;
