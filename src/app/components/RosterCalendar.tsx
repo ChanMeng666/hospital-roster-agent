@@ -547,6 +547,22 @@ export default function RosterCalendar({ rosterState, onStateChange, selectedSta
     },
   });
 
+  // AI Action: Navigate to Spreadsheet View
+  useCopilotAction({
+    name: "navigateToSpreadsheet",
+    description: "Navigate to the Spreadsheet View page",
+    parameters: [],
+    handler: () => {
+      if (typeof window !== 'undefined') {
+        window.location.href = '/spreadsheet';
+      }
+      return {
+        message: "Navigating to Spreadsheet View...",
+        url: "/spreadsheet"
+      };
+    },
+  });
+
   // Handle calendar events
   const onBeforeCreateEvent = useCallback((eventData: any) => {
     const event = {

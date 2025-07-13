@@ -629,6 +629,22 @@ export default function HospitalSpreadsheetEnhanced({
     },
   });
 
+  // AI Action: Navigate to Calendar View
+  useCopilotAction({
+    name: "navigateToCalendar",
+    description: "Navigate to the Calendar View page",
+    parameters: [],
+    handler: () => {
+      if (typeof window !== 'undefined') {
+        window.location.href = '/';
+      }
+      return {
+        message: "Navigating to Calendar View...",
+        url: "/"
+      };
+    },
+  });
+
   return (
     <div className="bg-gray-50 h-full flex flex-col">
       <div className="bg-white p-6 border-b">
