@@ -48,23 +48,21 @@ export const mockStaff: Staff[] = [
   { id: "36", name: "Tech Frank Perez", role: "Technician", department: "Cardiology", color: "#84817A" },
 ];
 
-// Helper function to generate dates for the current week
-const getWeekDates = () => {
+// Helper function to generate dates for the current month
+const getMonthDates = () => {
   const today = new Date();
-  const currentDay = today.getDay();
-  const monday = new Date(today);
-  monday.setDate(today.getDate() - currentDay + 1);
+  const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
   
   const dates = [];
-  for (let i = 0; i < 7; i++) {
-    const date = new Date(monday);
-    date.setDate(monday.getDate() + i);
+  for (let i = 0; i < 30; i++) {
+    const date = new Date(startOfMonth);
+    date.setDate(startOfMonth.getDate() + i);
     dates.push(date);
   }
   return dates;
 };
 
-const weekDates = getWeekDates();
+const monthDates = getMonthDates();
 
 // Helper function to create a shift
 const createShift = (id: string, staffId: string, staffName: string, date: Date, startHour: number, endHour: number, type: "Morning" | "Afternoon" | "Night" | "On-Call" | "Training" | "Meeting" | "Conference", department: string): Shift => {
@@ -88,112 +86,324 @@ const createShift = (id: string, staffId: string, staffName: string, date: Date,
   };
 };
 
-export const mockShifts: Shift[] = [
-  // Monday - Emergency Department
-  createShift("shift1", "1", "Dr. Sarah Johnson", weekDates[0], 7, 15, "Morning", "Emergency"),
-  createShift("shift2", "2", "Dr. Michael Chen", weekDates[0], 15, 23, "Afternoon", "Emergency"),
-  createShift("shift3", "4", "Nurse Emily Davis", weekDates[0], 7, 15, "Morning", "Emergency"),
-  createShift("shift4", "5", "Nurse James Wilson", weekDates[0], 15, 23, "Afternoon", "Emergency"),
-  createShift("shift5", "6", "Nurse Patricia Brown", weekDates[0], 23, 7, "Night", "Emergency"),
-  createShift("shift6", "8", "Tech Alex Brown", weekDates[0], 7, 15, "Morning", "Emergency"),
-  
-  // Tuesday - Emergency Department
-  createShift("shift7", "1", "Dr. Sarah Johnson", weekDates[1], 7, 15, "Morning", "Emergency"),
-  createShift("shift8", "3", "Dr. Robert Martinez", weekDates[1], 15, 23, "Afternoon", "Emergency"),
-  createShift("shift9", "4", "Nurse Emily Davis", weekDates[1], 7, 15, "Morning", "Emergency"),
-  createShift("shift10", "7", "Nurse David Kim", weekDates[1], 15, 23, "Afternoon", "Emergency"),
-  createShift("shift11", "6", "Nurse Patricia Brown", weekDates[1], 23, 7, "Night", "Emergency"),
-  createShift("shift12", "9", "Tech Maria Garcia", weekDates[1], 15, 23, "Afternoon", "Emergency"),
-  
-  // Wednesday - Emergency Department
-  createShift("shift13", "2", "Dr. Michael Chen", weekDates[2], 7, 15, "Morning", "Emergency"),
-  createShift("shift14", "3", "Dr. Robert Martinez", weekDates[2], 15, 23, "Afternoon", "Emergency"),
-  createShift("shift15", "5", "Nurse James Wilson", weekDates[2], 7, 15, "Morning", "Emergency"),
-  createShift("shift16", "7", "Nurse David Kim", weekDates[2], 15, 23, "Afternoon", "Emergency"),
-  createShift("shift17", "4", "Nurse Emily Davis", weekDates[2], 23, 7, "Night", "Emergency"),
-  createShift("shift18", "8", "Tech Alex Brown", weekDates[2], 15, 23, "Afternoon", "Emergency"),
-  
-  // Monday - ICU Department
-  createShift("shift19", "10", "Dr. Jennifer Lee", weekDates[0], 7, 15, "Morning", "ICU"),
-  createShift("shift20", "11", "Dr. William Taylor", weekDates[0], 15, 23, "Afternoon", "ICU"),
-  createShift("shift21", "13", "Nurse Thomas Moore", weekDates[0], 7, 15, "Morning", "ICU"),
-  createShift("shift22", "14", "Nurse Susan Clark", weekDates[0], 7, 15, "Morning", "ICU"),
-  createShift("shift23", "15", "Nurse Kevin White", weekDates[0], 15, 23, "Afternoon", "ICU"),
-  createShift("shift24", "16", "Nurse Angela Martinez", weekDates[0], 23, 7, "Night", "ICU"),
-  
-  // Tuesday - ICU Department
-  createShift("shift25", "10", "Dr. Jennifer Lee", weekDates[1], 7, 15, "Morning", "ICU"),
-  createShift("shift26", "12", "Dr. Lisa Anderson", weekDates[1], 15, 23, "Afternoon", "ICU"),
-  createShift("shift27", "13", "Nurse Thomas Moore", weekDates[1], 7, 15, "Morning", "ICU"),
-  createShift("shift28", "15", "Nurse Kevin White", weekDates[1], 15, 23, "Afternoon", "ICU"),
-  createShift("shift29", "16", "Nurse Angela Martinez", weekDates[1], 23, 7, "Night", "ICU"),
-  createShift("shift30", "17", "Tech Joseph Hall", weekDates[1], 7, 15, "Morning", "ICU"),
-  
-  // Monday - Surgery Department
-  createShift("shift31", "18", "Dr. Richard Thompson", weekDates[0], 7, 15, "Morning", "Surgery"),
-  createShift("shift32", "19", "Dr. Catherine Adams", weekDates[0], 7, 15, "Morning", "Surgery"),
-  createShift("shift33", "21", "Nurse Barbara Lopez", weekDates[0], 7, 15, "Morning", "Surgery"),
-  createShift("shift34", "22", "Nurse Christopher Lee", weekDates[0], 7, 15, "Morning", "Surgery"),
-  createShift("shift35", "24", "Tech Steven Harris", weekDates[0], 7, 15, "Morning", "Surgery"),
-  
-  // Tuesday - Surgery Department
-  createShift("shift36", "18", "Dr. Richard Thompson", weekDates[1], 7, 15, "Morning", "Surgery"),
-  createShift("shift37", "20", "Dr. Daniel Wright", weekDates[1], 7, 15, "Morning", "Surgery"),
-  createShift("shift38", "21", "Nurse Barbara Lopez", weekDates[1], 7, 15, "Morning", "Surgery"),
-  createShift("shift39", "23", "Nurse Michelle Young", weekDates[1], 7, 15, "Morning", "Surgery"),
-  createShift("shift40", "25", "Tech Nancy Walker", weekDates[1], 7, 15, "Morning", "Surgery"),
-  
-  // Monday - Pediatrics Department
-  createShift("shift41", "26", "Dr. Amanda Robinson", weekDates[0], 7, 15, "Morning", "Pediatrics"),
-  createShift("shift42", "27", "Dr. Matthew Clark", weekDates[0], 15, 23, "Afternoon", "Pediatrics"),
-  createShift("shift43", "28", "Nurse Jessica King", weekDates[0], 7, 15, "Morning", "Pediatrics"),
-  createShift("shift44", "29", "Nurse Brian Scott", weekDates[0], 15, 23, "Afternoon", "Pediatrics"),
-  createShift("shift45", "30", "Nurse Laura Green", weekDates[0], 23, 7, "Night", "Pediatrics"),
-  
-  // Tuesday - Pediatrics Department
-  createShift("shift46", "26", "Dr. Amanda Robinson", weekDates[1], 7, 15, "Morning", "Pediatrics"),
-  createShift("shift47", "27", "Dr. Matthew Clark", weekDates[1], 15, 23, "Afternoon", "Pediatrics"),
-  createShift("shift48", "28", "Nurse Jessica King", weekDates[1], 7, 15, "Morning", "Pediatrics"),
-  createShift("shift49", "30", "Nurse Laura Green", weekDates[1], 15, 23, "Afternoon", "Pediatrics"),
-  createShift("shift50", "31", "Tech Karen Hill", weekDates[1], 7, 15, "Morning", "Pediatrics"),
-  
-  // Monday - Cardiology Department
-  createShift("shift51", "32", "Dr. Charles Baker", weekDates[0], 7, 15, "Morning", "Cardiology"),
-  createShift("shift52", "33", "Dr. Helen Nelson", weekDates[0], 15, 23, "Afternoon", "Cardiology"),
-  createShift("shift53", "34", "Nurse Ronald Carter", weekDates[0], 7, 15, "Morning", "Cardiology"),
-  createShift("shift54", "35", "Nurse Dorothy Mitchell", weekDates[0], 15, 23, "Afternoon", "Cardiology"),
-  createShift("shift55", "36", "Tech Frank Perez", weekDates[0], 7, 15, "Morning", "Cardiology"),
-  
-  // Weekend shifts - Emergency (Critical department, needs 24/7 coverage)
-  createShift("shift56", "1", "Dr. Sarah Johnson", weekDates[5], 7, 15, "Morning", "Emergency"),
-  createShift("shift57", "2", "Dr. Michael Chen", weekDates[5], 15, 23, "Afternoon", "Emergency"),
-  createShift("shift58", "4", "Nurse Emily Davis", weekDates[5], 23, 7, "Night", "Emergency"),
-  createShift("shift59", "5", "Nurse James Wilson", weekDates[6], 7, 15, "Morning", "Emergency"),
-  createShift("shift60", "7", "Nurse David Kim", weekDates[6], 15, 23, "Afternoon", "Emergency"),
-  
-  // Weekend shifts - ICU (Critical department, needs 24/7 coverage)
-  createShift("shift61", "10", "Dr. Jennifer Lee", weekDates[5], 7, 15, "Morning", "ICU"),
-  createShift("shift62", "11", "Dr. William Taylor", weekDates[5], 15, 23, "Afternoon", "ICU"),
-  createShift("shift63", "13", "Nurse Thomas Moore", weekDates[5], 23, 7, "Night", "ICU"),
-  createShift("shift64", "14", "Nurse Susan Clark", weekDates[6], 7, 15, "Morning", "ICU"),
-  createShift("shift65", "15", "Nurse Kevin White", weekDates[6], 15, 23, "Afternoon", "ICU"),
-  
-  // Special shifts - On-call duties
-  createShift("shift66", "18", "Dr. Richard Thompson", weekDates[3], 17, 7, "On-Call", "Surgery"),
-  createShift("shift67", "19", "Dr. Catherine Adams", weekDates[4], 17, 7, "On-Call", "Surgery"),
-  createShift("shift68", "32", "Dr. Charles Baker", weekDates[3], 17, 7, "On-Call", "Cardiology"),
-  
-  // Additional weekday shifts to fill out the schedule
-  createShift("shift69", "1", "Dr. Sarah Johnson", weekDates[3], 7, 15, "Morning", "Emergency"),
-  createShift("shift70", "2", "Dr. Michael Chen", weekDates[3], 15, 23, "Afternoon", "Emergency"),
-  createShift("shift71", "3", "Dr. Robert Martinez", weekDates[4], 7, 15, "Morning", "Emergency"),
-  createShift("shift72", "1", "Dr. Sarah Johnson", weekDates[4], 15, 23, "Afternoon", "Emergency"),
-  
-  // Training and meeting events
-  createShift("shift73", "10", "Dr. Jennifer Lee", weekDates[2], 14, 16, "Training", "ICU"),
-  createShift("shift74", "26", "Dr. Amanda Robinson", weekDates[3], 13, 15, "Meeting", "Pediatrics"),
-  createShift("shift75", "18", "Dr. Richard Thompson", weekDates[2], 14, 16, "Conference", "Surgery"),
-];
+// Generate shifts for a realistic monthly schedule
+const generateMonthlyShifts = (): Shift[] => {
+  const shifts: Shift[] = [];
+  let shiftId = 1;
+
+  // Emergency Department - 24/7 coverage
+  // Pattern: 4 days on, 2 days off for most staff
+  const emergencyStaff = [
+    { id: "1", name: "Dr. Sarah Johnson", startDay: 0, pattern: [1,1,1,1,0,0] },
+    { id: "2", name: "Dr. Michael Chen", startDay: 2, pattern: [0,1,1,1,1,0] },
+    { id: "3", name: "Dr. Robert Martinez", startDay: 4, pattern: [1,0,0,1,1,1] },
+    { id: "4", name: "Nurse Emily Davis", startDay: 0, pattern: [1,1,0,0,1,1] },
+    { id: "5", name: "Nurse James Wilson", startDay: 1, pattern: [0,1,1,1,0,1] },
+    { id: "6", name: "Nurse Patricia Brown", startDay: 3, pattern: [1,0,1,1,0,0] },
+    { id: "7", name: "Nurse David Kim", startDay: 2, pattern: [1,1,0,1,1,0] },
+    { id: "8", name: "Tech Alex Brown", startDay: 0, pattern: [1,0,1,0,1,0] },
+    { id: "9", name: "Tech Maria Garcia", startDay: 1, pattern: [0,1,0,1,0,1] }
+  ];
+
+  // Generate Emergency shifts
+  emergencyStaff.forEach(staff => {
+    for (let day = 0; day < 30; day++) {
+      const patternIndex = (day + staff.startDay) % staff.pattern.length;
+      if (staff.pattern[patternIndex] === 1) {
+        const dayOfWeek = monthDates[day].getDay();
+        let shiftType: "Morning" | "Afternoon" | "Night" = "Morning";
+        let startHour = 7;
+        let endHour = 15;
+        
+        // Rotate shifts based on week
+        const weekNumber = Math.floor(day / 7);
+        if (staff.id <= "3") { // Doctors
+          if (weekNumber % 3 === 0) {
+            shiftType = "Morning";
+            startHour = 7;
+            endHour = 15;
+          } else if (weekNumber % 3 === 1) {
+            shiftType = "Afternoon";
+            startHour = 15;
+            endHour = 23;
+          } else {
+            shiftType = "Morning";
+            startHour = 7;
+            endHour = 15;
+          }
+        } else if (staff.id <= "7") { // Nurses
+          if (weekNumber % 3 === 0) {
+            shiftType = "Morning";
+            startHour = 7;
+            endHour = 15;
+          } else if (weekNumber % 3 === 1) {
+            shiftType = "Afternoon";
+            startHour = 15;
+            endHour = 23;
+          } else {
+            shiftType = "Night";
+            startHour = 23;
+            endHour = 7;
+          }
+        } else { // Techs
+          if (day % 2 === 0) {
+            shiftType = "Morning";
+            startHour = 7;
+            endHour = 15;
+          } else {
+            shiftType = "Afternoon";
+            startHour = 15;
+            endHour = 23;
+          }
+        }
+        
+        shifts.push(createShift(
+          `shift${shiftId++}`,
+          staff.id,
+          staff.name,
+          monthDates[day],
+          startHour,
+          endHour,
+          shiftType,
+          "Emergency"
+        ));
+      }
+    }
+  });
+
+  // ICU Department - Similar 24/7 pattern
+  const icuStaff = [
+    { id: "10", name: "Dr. Jennifer Lee", days: [0,1,2,4,5,7,8,10,11,12,14,15,17,18,20,21,22,24,25,27,28] },
+    { id: "11", name: "Dr. William Taylor", days: [1,2,3,5,6,8,9,11,12,13,15,16,18,19,21,22,23,25,26,28,29] },
+    { id: "12", name: "Dr. Lisa Anderson", days: [0,3,4,6,7,9,10,13,14,16,17,19,20,23,24,26,27,29] },
+    { id: "13", name: "Nurse Thomas Moore", days: [0,1,3,4,6,7,9,10,12,13,15,16,18,19,21,22,24,25,27,28] },
+    { id: "14", name: "Nurse Susan Clark", days: [1,2,4,5,7,8,10,11,13,14,16,17,19,20,22,23,25,26,28,29] },
+    { id: "15", name: "Nurse Kevin White", days: [0,2,3,5,6,8,9,11,12,14,15,17,18,20,21,23,24,26,27,29] },
+    { id: "16", name: "Nurse Angela Martinez", days: [2,3,4,6,7,8,10,11,12,14,15,16,18,19,20,22,23,24,26,27,28] },
+    { id: "17", name: "Tech Joseph Hall", days: [0,2,4,6,8,10,12,14,16,18,20,22,24,26,28] }
+  ];
+
+  icuStaff.forEach(staff => {
+    staff.days.forEach((day, index) => {
+      if (day < 30) {
+        const weekNumber = Math.floor(day / 7);
+        let shiftType: "Morning" | "Afternoon" | "Night" = "Morning";
+        let startHour = 7;
+        let endHour = 15;
+        
+        if (staff.id >= "10" && staff.id <= "12") { // Doctors
+          shiftType = index % 2 === 0 ? "Morning" : "Afternoon";
+          startHour = shiftType === "Morning" ? 7 : 15;
+          endHour = shiftType === "Morning" ? 15 : 23;
+        } else { // Nurses and techs
+          const shiftIndex = index % 3;
+          if (shiftIndex === 0) {
+            shiftType = "Morning";
+            startHour = 7;
+            endHour = 15;
+          } else if (shiftIndex === 1) {
+            shiftType = "Afternoon";
+            startHour = 15;
+            endHour = 23;
+          } else {
+            shiftType = "Night";
+            startHour = 23;
+            endHour = 7;
+          }
+        }
+        
+        shifts.push(createShift(
+          `shift${shiftId++}`,
+          staff.id,
+          staff.name,
+          monthDates[day],
+          startHour,
+          endHour,
+          shiftType,
+          "ICU"
+        ));
+      }
+    });
+  });
+
+  // Surgery Department - Weekdays mainly, some weekends
+  const surgerySchedule = [
+    { id: "18", name: "Dr. Richard Thompson", days: [0,1,2,3,4,7,8,9,10,11,14,15,16,17,18,21,22,23,24,25,28,29] },
+    { id: "19", name: "Dr. Catherine Adams", days: [0,1,2,3,4,7,8,9,10,11,14,15,16,17,18,21,22,23,24,25,28,29] },
+    { id: "20", name: "Dr. Daniel Wright", days: [1,2,3,4,5,8,9,10,11,12,15,16,17,18,19,22,23,24,25,26] },
+    { id: "21", name: "Nurse Barbara Lopez", days: [0,1,2,3,4,7,8,9,10,11,14,15,16,17,18,21,22,23,24,25] },
+    { id: "22", name: "Nurse Christopher Lee", days: [1,2,3,4,5,8,9,10,11,12,15,16,17,18,19,22,23,24,25,26] },
+    { id: "23", name: "Nurse Michelle Young", days: [0,2,3,4,5,7,9,10,11,12,14,16,17,18,19,21,23,24,25,26] },
+    { id: "24", name: "Tech Steven Harris", days: [0,1,2,3,4,7,8,9,10,11,14,15,16,17,18,21,22,23,24,25] },
+    { id: "25", name: "Tech Nancy Walker", days: [1,2,3,4,5,8,9,10,11,12,15,16,17,18,19,22,23,24,25,26] }
+  ];
+
+  surgerySchedule.forEach(staff => {
+    staff.days.forEach(day => {
+      if (day < 30) {
+        const dayOfWeek = monthDates[day].getDay();
+        // Surgery is mostly morning shifts
+        shifts.push(createShift(
+          `shift${shiftId++}`,
+          staff.id,
+          staff.name,
+          monthDates[day],
+          7,
+          15,
+          "Morning",
+          "Surgery"
+        ));
+        
+        // Add some on-call shifts for doctors
+        if (staff.id <= "20" && (dayOfWeek === 3 || dayOfWeek === 5) && Math.random() > 0.7) {
+          shifts.push(createShift(
+            `shift${shiftId++}`,
+            staff.id,
+            staff.name,
+            monthDates[day],
+            17,
+            7,
+            "On-Call",
+            "Surgery"
+          ));
+        }
+      }
+    });
+  });
+
+  // Pediatrics Department
+  const pediatricsStaff = [
+    { id: "26", name: "Dr. Amanda Robinson", days: [0,1,2,3,4,7,8,9,10,11,14,15,16,17,18,21,22,23,24,25,28,29] },
+    { id: "27", name: "Dr. Matthew Clark", days: [1,2,3,4,5,8,9,10,11,12,15,16,17,18,19,22,23,24,25,26,29] },
+    { id: "28", name: "Nurse Jessica King", days: [0,1,2,4,5,7,8,9,11,12,14,15,16,18,19,21,22,23,25,26,28,29] },
+    { id: "29", name: "Nurse Brian Scott", days: [0,2,3,4,6,7,9,10,11,13,14,16,17,18,20,21,23,24,25,27,28] },
+    { id: "30", name: "Nurse Laura Green", days: [1,2,3,5,6,8,9,10,12,13,15,16,17,19,20,22,23,24,26,27,29] },
+    { id: "31", name: "Tech Karen Hill", days: [0,1,3,4,7,8,10,11,14,15,17,18,21,22,24,25,28,29] }
+  ];
+
+  pediatricsStaff.forEach(staff => {
+    staff.days.forEach((day, index) => {
+      if (day < 30) {
+        let shiftType: "Morning" | "Afternoon" | "Night" = "Morning";
+        let startHour = 7;
+        let endHour = 15;
+        
+        if (staff.id === "27" || staff.id === "29") {
+          shiftType = "Afternoon";
+          startHour = 15;
+          endHour = 23;
+        } else if (staff.id === "30" && index % 3 === 2) {
+          shiftType = "Night";
+          startHour = 23;
+          endHour = 7;
+        }
+        
+        shifts.push(createShift(
+          `shift${shiftId++}`,
+          staff.id,
+          staff.name,
+          monthDates[day],
+          startHour,
+          endHour,
+          shiftType,
+          "Pediatrics"
+        ));
+      }
+    });
+  });
+
+  // Cardiology Department
+  const cardiologyStaff = [
+    { id: "32", name: "Dr. Charles Baker", days: [0,1,2,3,4,7,8,9,10,11,14,15,16,17,18,21,22,23,24,25,28,29] },
+    { id: "33", name: "Dr. Helen Nelson", days: [1,2,3,4,5,8,9,10,11,12,15,16,17,18,19,22,23,24,25,26] },
+    { id: "34", name: "Nurse Ronald Carter", days: [0,1,2,3,4,7,8,9,10,11,14,15,16,17,18,21,22,23,24,25] },
+    { id: "35", name: "Nurse Dorothy Mitchell", days: [1,2,3,4,5,8,9,10,11,12,15,16,17,18,19,22,23,24,25,26] },
+    { id: "36", name: "Tech Frank Perez", days: [0,2,4,7,9,11,14,16,18,21,23,25,28] }
+  ];
+
+  cardiologyStaff.forEach(staff => {
+    staff.days.forEach(day => {
+      if (day < 30) {
+        const shiftType = staff.id === "33" || staff.id === "35" ? "Afternoon" : "Morning";
+        const startHour = shiftType === "Morning" ? 7 : 15;
+        const endHour = shiftType === "Morning" ? 15 : 23;
+        
+        shifts.push(createShift(
+          `shift${shiftId++}`,
+          staff.id,
+          staff.name,
+          monthDates[day],
+          startHour,
+          endHour,
+          shiftType,
+          "Cardiology"
+        ));
+        
+        // Add some on-call shifts
+        if (staff.id === "32" && day % 7 === 3) {
+          shifts.push(createShift(
+            `shift${shiftId++}`,
+            staff.id,
+            staff.name,
+            monthDates[day],
+            17,
+            7,
+            "On-Call",
+            "Cardiology"
+          ));
+        }
+      }
+    });
+  });
+
+  // Add special events throughout the month
+  // Training sessions
+  [5, 12, 19, 26].forEach(day => {
+    if (day < 30) {
+      shifts.push(createShift(
+        `shift${shiftId++}`,
+        "10",
+        "Dr. Jennifer Lee",
+        monthDates[day],
+        14,
+        16,
+        "Training",
+        "ICU"
+      ));
+    }
+  });
+
+  // Department meetings
+  [7, 14, 21, 28].forEach(day => {
+    if (day < 30) {
+      shifts.push(createShift(
+        `shift${shiftId++}`,
+        "26",
+        "Dr. Amanda Robinson",
+        monthDates[day],
+        13,
+        15,
+        "Meeting",
+        "Pediatrics"
+      ));
+      
+      shifts.push(createShift(
+        `shift${shiftId++}`,
+        "18",
+        "Dr. Richard Thompson",
+        monthDates[day],
+        14,
+        16,
+        "Conference",
+        "Surgery"
+      ));
+    }
+  });
+
+  return shifts;
+};
+
+export const mockShifts: Shift[] = generateMonthlyShifts();
 
 export const initialRosterState: RosterAgentState = {
   staff: mockStaff,

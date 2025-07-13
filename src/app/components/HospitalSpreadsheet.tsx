@@ -515,7 +515,7 @@ export default function HospitalSpreadsheet({
   return (
     <div className="bg-gray-50 h-full flex flex-col">
       <div className="bg-white p-6 border-b">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-4">
           <input
             type="text"
             value={spreadsheet.title}
@@ -527,7 +527,7 @@ export default function HospitalSpreadsheet({
               };
               setSpreadsheets(updatedSpreadsheets);
             }}
-            className="text-xl font-semibold bg-transparent border-none outline-none focus:border-b-2 transition-colors"
+            className="text-xl font-semibold bg-transparent border-none outline-none focus:border-b-2 transition-colors flex-1 min-w-0"
             style={{ borderColor: "var(--brand-primary)" }}
           />
           <div className="flex items-center gap-4">
