@@ -2,20 +2,25 @@
 import { CopilotKit } from "@copilotkit/react-core";
 import { CopilotSidebar } from "@copilotkit/react-ui";
 import "@copilotkit/react-ui/styles.css";
-import CalendarStyles from "./components/CalendarStyles";
-import RosterCalendar from "./components/RosterCalendar";
-import StaffList from "./components/StaffList";
-import Navigation from "./components/Navigation";
+import dynamic from "next/dynamic";
 import { RosterAgentState, Staff } from "./types/roster";
 import { initialRosterState } from "./data/mockData";
-import { useState } from "react";
+import { useState, Suspense } from "react";
+
+// Dynamic imports to avoid SSR issues
+const CalendarStyles = dynamic(() => import("./components/CalendarStyles"), { ssr: false });
+const RosterCalendar = dynamic(() => import("./components/RosterCalendar"), { ssr: false });
+const StaffList = dynamic(() => import("./components/StaffList"), { ssr: false });
+const Navigation = dynamic(() => import("./components/Navigation"), { ssr: false });
 
 export default function Home() {
   return (
     <CopilotKit
       runtimeUrl="/api/copilotkit"
     >
-      <CalendarStyles />
+      <Suspense fallback={<div>Loading styles...</div>}>
+        <CalendarStyles />
+      </Suspense>
       <div className="app-container">
         <MainContent />
         <CopilotSidebar
@@ -84,17 +89,23 @@ function MainContent() {
 
   return (
     <div className="calendar-container">
-      <Navigation currentPage="calendar" />
-      <StaffList 
-        staff={rosterState.staff}
-        onAddStaff={handleAddStaff}
-        onEditStaff={handleEditStaff}
-        onDeleteStaff={handleDeleteStaff}
-      />
-      <RosterCalendar 
-        rosterState={rosterState}
-        onStateChange={setRosterState}
-      />
+      <Suspense fallback={<div>Loading navigation...</div>}>
+        <Navigation currentPage="calendar" />
+      </Suspense>
+      <Suspense fallback={<div>Loading staff list...</div>}>
+        <StaffList 
+          staff={rosterState.staff}
+          onAddStaff={handleAddStaff}
+          onEditStaff={handleEditStaff}
+          onDeleteStaff={handleDeleteStaff}
+        />
+      </Suspense>
+      <Suspense fallback={<div>Loading calendar...</div>}>
+        <RosterCalendar 
+          rosterState={rosterState}
+          onStateChange={setRosterState}
+        />
+      </Suspense>
     </div>
   );
 }

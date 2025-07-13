@@ -2,11 +2,14 @@
 import { CopilotKit } from "@copilotkit/react-core";
 import { CopilotSidebar } from "@copilotkit/react-ui";
 import "@copilotkit/react-ui/styles.css";
-import { useState } from "react";
-import HospitalSpreadsheet from "../components/HospitalSpreadsheet";
-import Navigation from "../components/Navigation";
+import { useState, Suspense } from "react";
+import dynamic from "next/dynamic";
 import { SpreadsheetData } from "../types/spreadsheet";
 import { initialSpreadsheetData } from "../data/spreadsheetData";
+
+// Dynamic imports to avoid SSR issues
+const HospitalSpreadsheet = dynamic(() => import("../components/HospitalSpreadsheet"), { ssr: false });
+const Navigation = dynamic(() => import("../components/Navigation"), { ssr: false });
 
 export default function SpreadsheetPage() {
   return (
@@ -33,22 +36,26 @@ function SpreadsheetContent() {
 
   return (
     <div className="calendar-container" style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-      <Navigation currentPage="spreadsheet" />
+      <Suspense fallback={<div>Loading navigation...</div>}>
+        <Navigation currentPage="spreadsheet" />
+      </Suspense>
       <div style={{ flex: 1, overflow: "hidden" }}>
-        <HospitalSpreadsheet
-          spreadsheets={spreadsheets}
-          selectedSpreadsheetIndex={selectedSpreadsheetIndex}
-          setSelectedSpreadsheetIndex={setSelectedSpreadsheetIndex}
-          spreadsheet={spreadsheets[selectedSpreadsheetIndex]}
-          setSpreadsheet={(spreadsheet) => {
-            setSpreadsheets((prev) => {
-              const newSpreadsheets = [...prev];
-              newSpreadsheets[selectedSpreadsheetIndex] = spreadsheet;
-              return newSpreadsheets;
-            });
-          }}
-          setSpreadsheets={setSpreadsheets}
-        />
+        <Suspense fallback={<div>Loading spreadsheet...</div>}>
+          <HospitalSpreadsheet
+            spreadsheets={spreadsheets}
+            selectedSpreadsheetIndex={selectedSpreadsheetIndex}
+            setSelectedSpreadsheetIndex={setSelectedSpreadsheetIndex}
+            spreadsheet={spreadsheets[selectedSpreadsheetIndex]}
+            setSpreadsheet={(spreadsheet) => {
+              setSpreadsheets((prev) => {
+                const newSpreadsheets = [...prev];
+                newSpreadsheets[selectedSpreadsheetIndex] = spreadsheet;
+                return newSpreadsheets;
+              });
+            }}
+            setSpreadsheets={setSpreadsheets}
+          />
+        </Suspense>
       </div>
     </div>
   );
