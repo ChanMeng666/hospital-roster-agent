@@ -210,25 +210,28 @@ export default function HospitalSpreadsheet({
 
   // Function to add a new column
   const addColumn = () => {
-    const updatedRows = spreadsheet.rows.map(row => [...row, { value: "" }]);
-    const updatedSpreadsheets = [...spreadsheets];
-    updatedSpreadsheets[selectedSpreadsheetIndex] = {
+    // Following spreadsheet-agent pattern exactly
+    const spreadsheetRows = [...spreadsheet.rows];
+    for (let i = 0; i < spreadsheetRows.length; i++) {
+      spreadsheetRows[i].push({ value: "" });
+    }
+    setSpreadsheet({
       ...spreadsheet,
-      rows: updatedRows,
-    };
-    setSpreadsheets(updatedSpreadsheets);
+      rows: spreadsheetRows,
+    });
   };
 
   // Function to add a new row
   const addRow = () => {
     const numberOfColumns = spreadsheet.rows[0]?.length || 12;
-    const newRow: SpreadsheetRow = Array(numberOfColumns).fill(null).map(() => ({ value: "" }));
-    const updatedSpreadsheets = [...spreadsheets];
-    updatedSpreadsheets[selectedSpreadsheetIndex] = {
+    const newRow: SpreadsheetRow = [];
+    for (let i = 0; i < numberOfColumns; i++) {
+      newRow.push({ value: "" });
+    }
+    setSpreadsheet({
       ...spreadsheet,
       rows: [...spreadsheet.rows, newRow],
-    };
-    setSpreadsheets(updatedSpreadsheets);
+    });
   };
 
   return (
@@ -258,19 +261,10 @@ export default function HospitalSpreadsheet({
       <div className="flex-1 p-6 overflow-auto">
         <div className="flex items-start">
           <Spreadsheet
-            key={`spreadsheet-${selectedSpreadsheetIndex}-${spreadsheet.rows[0]?.length || 0}`}
             data={spreadsheet.rows}
             onChange={(data) => {
-              const updatedSpreadsheets = [...spreadsheets];
-              updatedSpreadsheets[selectedSpreadsheetIndex] = {
-                ...spreadsheet,
-                rows: data as SpreadsheetRow[],
-              };
-              setSpreadsheets(updatedSpreadsheets);
+              setSpreadsheet({ ...spreadsheet, rows: data as any });
             }}
-            columnLabels={Array.from({ length: Math.max(20, spreadsheet.rows[0]?.length || 0) }, (_, i) => 
-              String.fromCharCode(65 + (i % 26)) + (i >= 26 ? Math.floor(i / 26) : '')
-            )}
           />
           <button
             onClick={addColumn}
