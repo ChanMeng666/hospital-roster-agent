@@ -8,7 +8,7 @@ import { SpreadsheetData } from "../types/spreadsheet";
 import { initialSpreadsheetData } from "../data/spreadsheetData";
 
 // Dynamic imports to avoid SSR issues
-const HospitalSpreadsheet = dynamic(() => import("../components/HospitalSpreadsheet"), { ssr: false });
+const HospitalSpreadsheet = dynamic(() => import("../components/HospitalSpreadsheetEnhanced"), { ssr: false });
 const Navigation = dynamic(() => import("../components/Navigation"), { ssr: false });
 
 export default function SpreadsheetPage() {

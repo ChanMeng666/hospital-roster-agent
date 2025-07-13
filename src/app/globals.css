@@ -294,6 +294,168 @@ input[type="checkbox"] {
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
+/* Enhanced Spreadsheet Styles */
+.hospital-spreadsheet-table {
+  border-collapse: collapse;
+  background: white;
+  font-size: 14px;
+}
+
+.hospital-spreadsheet-table th,
+.hospital-spreadsheet-table td {
+  border: 1px solid #e5e7eb;
+  padding: 0;
+  position: relative;
+}
+
+/* Corner header */
+.corner-header {
+  width: 40px;
+  height: 32px;
+  background-color: #f9fafb;
+  border-right: 2px solid #e5e7eb !important;
+  border-bottom: 2px solid #e5e7eb !important;
+}
+
+/* Column headers */
+.column-header {
+  height: 32px;
+  min-width: 80px;
+  background-color: #f9fafb;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s;
+  border-bottom: 2px solid #e5e7eb !important;
+}
+
+.column-header:hover {
+  background-color: #f3f4f6;
+}
+
+.column-header.selected {
+  background-color: var(--brand-secondary-light) !important;
+  color: var(--brand-tertiary);
+  font-weight: 700;
+}
+
+/* Row headers */
+.row-header {
+  width: 40px;
+  background-color: #f9fafb;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s;
+  border-right: 2px solid #e5e7eb !important;
+}
+
+.row-header:hover {
+  background-color: #f3f4f6;
+}
+
+.row-header.selected {
+  background-color: var(--brand-secondary-light) !important;
+  color: var(--brand-tertiary);
+  font-weight: 700;
+}
+
+/* Cells */
+.spreadsheet-cell {
+  min-width: 80px;
+  height: 33px;
+  padding: 0;
+  background: white;
+  transition: background-color 0.15s;
+}
+
+.spreadsheet-cell:hover {
+  background-color: #fafafa;
+}
+
+.spreadsheet-cell.col-selected {
+  background-color: rgba(41, 223, 227, 0.08) !important;
+}
+
+.row-selected .spreadsheet-cell {
+  background-color: rgba(41, 223, 227, 0.08) !important;
+}
+
+.row-selected .spreadsheet-cell.col-selected {
+  background-color: rgba(41, 223, 227, 0.15) !important;
+}
+
+/* Cell value display */
+.cell-value {
+  padding: 6px 8px;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: text;
+}
+
+/* Cell input */
+.cell-input {
+  width: 100%;
+  height: 100%;
+  padding: 6px 8px;
+  border: none;
+  outline: none;
+  font: inherit;
+  background: white;
+  box-shadow: inset 0 0 0 2px var(--brand-primary);
+}
+
+/* Add row/column headers */
+.add-row-header,
+.add-column-header {
+  background-color: #fafafa;
+  width: 40px;
+  height: 32px;
+}
+
+.add-row-header button,
+.add-column-header button {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.add-row-header button:hover,
+.add-column-header button:hover {
+  background-color: var(--brand-primary-light);
+  color: var(--brand-primary);
+}
+
+/* Empty cells */
+.empty-cell {
+  background-color: #fafafa;
+  cursor: default;
+}
+
+/* Selection actions bar */
+.selection-actions {
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .spreadsheet {
@@ -316,5 +478,19 @@ input[type="checkbox"] {
     height: 1.7em !important;
     min-height: 1.7em !important;
     max-height: 1.7em !important;
+  }
+  
+  .hospital-spreadsheet-table {
+    font-size: 12px;
+  }
+  
+  .column-header,
+  .spreadsheet-cell {
+    min-width: 60px;
+  }
+  
+  .cell-value,
+  .cell-input {
+    padding: 4px 6px;
   }
 }
