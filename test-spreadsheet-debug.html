@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spreadsheet Column Bug Debug</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .code-block {
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .error {
+            background: #fee;
+            border-color: #fcc;
+        }
+        .correct {
+            background: #efe;
+            border-color: #cfc;
+        }
+        h2 {
+            color: #333;
+        }
+        .explanation {
+            margin: 15px 0;
+            line-height: 1.6;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .demo-output {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            min-height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Spreadsheet Add Column Bug Analysis</h1>
+        
+        <h2>The Problem</h2>
+        <div class="explanation">
+            The add column button in SingleSpreadsheet.tsx has a critical bug. Let's examine the problematic code:
+        </div>
+        
+        <div class="code-block error">
+            <pre>onClick={() => {
+  // add an empty cell to each row
+  const spreadsheetRows = [...spreadsheet.rows];
+  for (let i = 0; i < spreadsheet.rows.length; i++) {
+    spreadsheet.rows[i].push({ value: "" });  // ❌ BUG: Modifying original array!
+  }
+  setSpreadsheet({
+    ...spreadsheet,
+    rows: spreadsheetRows,
+  });
+}}</pre>
+        </div>
+        
+        <h2>Why It Fails</h2>
+        <div class="explanation">
+            <ol>
+                <li><strong>Shallow Copy Issue:</strong> <code>[...spreadsheet.rows]</code> creates a shallow copy of the rows array, but each row is still a reference to the original row array.</li>
+                <li><strong>Direct Mutation:</strong> The code modifies <code>spreadsheet.rows[i]</code> directly, which mutates the original state.</li>
+                <li><strong>React State Update:</strong> React may not detect the change because the array references haven't changed (only their contents have).</li>
+            </ol>
+        </div>
+        
+        <h2>Interactive Demo</h2>
+        <button onclick="demonstrateBug()">Demonstrate the Bug</button>
+        <button onclick="demonstrateFix()">Show Correct Implementation</button>
+        <div id="demo-output" class="demo-output"></div>
+        
+        <h2>The Solution</h2>
+        <div class="code-block correct">
+            <pre>onClick={() => {
+  // add an empty cell to each row
+  const spreadsheetRows = spreadsheet.rows.map(row => [...row, { value: "" }]);
+  setSpreadsheet({
+    ...spreadsheet,
+    rows: spreadsheetRows,
+  });
+}}</pre>
+        </div>
+        
+        <h2>Alternative Solutions</h2>
+        <div class="code-block correct">
+            <pre>// Option 2: Deep clone approach
+onClick={() => {
+  const spreadsheetRows = spreadsheet.rows.map(row => [...row]);
+  for (let i = 0; i < spreadsheetRows.length; i++) {
+    spreadsheetRows[i].push({ value: "" });
+  }
+  setSpreadsheet({
+    ...spreadsheet,
+    rows: spreadsheetRows,
+  });
+}}</pre>
+        </div>
+        
+        <div class="code-block correct">
+            <pre>// Option 3: Using structuredClone (modern browsers)
+onClick={() => {
+  const spreadsheetRows = structuredClone(spreadsheet.rows);
+  for (let i = 0; i < spreadsheetRows.length; i++) {
+    spreadsheetRows[i].push({ value: "" });
+  }
+  setSpreadsheet({
+    ...spreadsheet,
+    rows: spreadsheetRows,
+  });
+}}</pre>
+        </div>
+        
+        <h2>Expected Console Errors</h2>
+        <div class="explanation">
+            When clicking the add column button with the current bug, you might see:
+            <ul>
+                <li>No immediate errors, but the spreadsheet won't update visually</li>
+                <li>React development mode warnings about state mutations</li>
+                <li>Potential "Cannot update a component while rendering" warnings</li>
+                <li>The onChange handler logs showing data changes, but UI not reflecting them</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        function demonstrateBug() {
+            const output = document.getElementById('demo-output');
+            
+            // Simulate the bug
+            const spreadsheet = {
+                rows: [
+                    [{ value: "A1" }, { value: "B1" }],
+                    [{ value: "A2" }, { value: "B2" }]
+                ]
+            };
+            
+            // Buggy implementation
+            const spreadsheetRows = [...spreadsheet.rows];
+            output.innerHTML = '<h3>Bug Demonstration:</h3>';
+            output.innerHTML += '<p>Original rows: ' + JSON.stringify(spreadsheet.rows) + '</p>';
+            
+            // This modifies the original!
+            for (let i = 0; i < spreadsheet.rows.length; i++) {
+                spreadsheet.rows[i].push({ value: "" });
+            }
+            
+            output.innerHTML += '<p>After modification: ' + JSON.stringify(spreadsheet.rows) + '</p>';
+            output.innerHTML += '<p>spreadsheetRows === spreadsheet.rows? ' + (spreadsheetRows === spreadsheet.rows) + '</p>';
+            output.innerHTML += '<p>spreadsheetRows[0] === spreadsheet.rows[0]? ' + (spreadsheetRows[0] === spreadsheet.rows[0]) + '</p>';
+            output.innerHTML += '<p class="error">❌ The original data was mutated!</p>';
+        }
+        
+        function demonstrateFix() {
+            const output = document.getElementById('demo-output');
+            
+            // Simulate the fix
+            const spreadsheet = {
+                rows: [
+                    [{ value: "A1" }, { value: "B1" }],
+                    [{ value: "A2" }, { value: "B2" }]
+                ]
+            };
+            
+            // Fixed implementation
+            const originalRows = JSON.stringify(spreadsheet.rows);
+            const spreadsheetRows = spreadsheet.rows.map(row => [...row, { value: "" }]);
+            
+            output.innerHTML = '<h3>Fixed Implementation:</h3>';
+            output.innerHTML += '<p>Original rows: ' + originalRows + '</p>';
+            output.innerHTML += '<p>New rows: ' + JSON.stringify(spreadsheetRows) + '</p>';
+            output.innerHTML += '<p>Original unchanged: ' + JSON.stringify(spreadsheet.rows) + '</p>';
+            output.innerHTML += '<p>spreadsheetRows === spreadsheet.rows? ' + (spreadsheetRows === spreadsheet.rows) + '</p>';
+            output.innerHTML += '<p>spreadsheetRows[0] === spreadsheet.rows[0]? ' + (spreadsheetRows[0] === spreadsheet.rows[0]) + '</p>';
+            output.innerHTML += '<p class="correct">✅ Original data preserved, new data created!</p>';
+        }
+    </script>
+</body>
+</html>

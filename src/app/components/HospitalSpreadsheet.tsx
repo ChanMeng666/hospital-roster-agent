@@ -258,6 +258,7 @@ export default function HospitalSpreadsheet({
       <div className="flex-1 p-6 overflow-auto">
         <div className="flex items-start">
           <Spreadsheet
+            key={`spreadsheet-${selectedSpreadsheetIndex}-${spreadsheet.rows[0]?.length || 0}`}
             data={spreadsheet.rows}
             onChange={(data) => {
               const updatedSpreadsheets = [...spreadsheets];
@@ -267,7 +268,9 @@ export default function HospitalSpreadsheet({
               };
               setSpreadsheets(updatedSpreadsheets);
             }}
-            columnLabels={["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"]}
+            columnLabels={Array.from({ length: Math.max(20, spreadsheet.rows[0]?.length || 0) }, (_, i) => 
+              String.fromCharCode(65 + (i % 26)) + (i >= 26 ? Math.floor(i / 26) : '')
+            )}
           />
           <button
             onClick={addColumn}
