@@ -55,23 +55,38 @@ body {
 
 /* TUI Calendar Custom Styles - Minimal overrides for brand colors */
 /* Fix all input text colors to black for better readability */
-.toastui-calendar-popup-container input,
+.toastui-calendar-floating-layer input[type="text"],
+.toastui-calendar-floating-layer input[type="number"],
 .toastui-calendar-form-container input,
 .toastui-calendar-popup-section input,
 .toastui-calendar-popup-section-item input,
-.toastui-calendar-content input,
-.toastui-calendar-datetime-input,
-.tui-datepicker-input,
-.tui-timepicker-input,
-.toastui-calendar-popup-section .toastui-calendar-content {
+.toastui-calendar-content,
+.toastui-calendar-popup-section .toastui-calendar-content,
+.toastui-calendar-popup-section-item .toastui-calendar-content {
   color: #000 !important;
 }
 
-/* Also ensure dropdown text is black */
+/* Date and time picker specific styles */
+.tui-full-calendar-popup-section input,
+.tui-datepicker input,
+.tui-timepicker input,
+.tui-datepicker-input input,
+.tui-timepicker-input input {
+  color: #000 !important;
+}
+
+/* Dropdown text colors */
 .toastui-calendar-dropdown-button,
+.toastui-calendar-dropdown-button span,
 .toastui-calendar-dropdown-menu-item,
-.toastui-calendar-state-item,
-.toastui-calendar-popup-section .toastui-calendar-content.toastui-calendar-state-item {
+.toastui-calendar-popup-section .toastui-calendar-dropdown-button .toastui-calendar-content {
+  color: #000 !important;
+}
+
+/* Calendar state dropdown items */
+.toastui-calendar-state-section .toastui-calendar-content,
+.toastui-calendar-calendar-section .toastui-calendar-content,
+.toastui-calendar-event-state {
   color: #000 !important;
 }
 
@@ -102,4 +117,30 @@ input[type="checkbox"] {
   outline: 2px solid transparent;
   outline-offset: 2px;
   box-shadow: 0 0 0 2px var(--brand-primary-light);
+}
+
+/* Override any inherited gray text colors with higher specificity */
+.toastui-calendar-floating-layer *,
+.toastui-calendar-form-container *,
+.toastui-calendar-popup-container * {
+  color: inherit;
+}
+
+.toastui-calendar-floating-layer input,
+.toastui-calendar-floating-layer .toastui-calendar-content,
+.toastui-calendar-form-container input,
+.toastui-calendar-form-container .toastui-calendar-content {
+  color: #000 !important;
+}
+
+/* Title and location specific inputs */
+.toastui-calendar-popup-section-title input,
+.toastui-calendar-popup-section-location input {
+  color: #000 !important;
+}
+
+/* Ensure placeholder text is visible but lighter */
+.toastui-calendar-floating-layer input::placeholder {
+  color: #666 !important;
+  opacity: 1;
 }
