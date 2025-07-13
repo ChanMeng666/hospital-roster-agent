@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Spreadsheet from "react-spreadsheet";
 import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";

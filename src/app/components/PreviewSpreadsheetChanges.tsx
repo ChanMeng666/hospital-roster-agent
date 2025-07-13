@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import Spreadsheet from "react-spreadsheet";
 import { SpreadsheetRow } from "../types/spreadsheet";
