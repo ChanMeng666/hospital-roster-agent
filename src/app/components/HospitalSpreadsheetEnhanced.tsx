@@ -593,7 +593,7 @@ export default function HospitalSpreadsheetEnhanced({
         </div>
       )}
 
-      <div className="flex-1 p-6 overflow-auto">
+      <div className="flex-1 overflow-auto">
         <div className="inline-block bg-white rounded-lg shadow-sm">
           <table className="hospital-spreadsheet-table">
             <thead>

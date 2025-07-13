@@ -558,7 +558,7 @@ export default function HospitalSpreadsheet({
         </div>
       </div>
 
-      <div className="flex-1 p-6 overflow-auto">
+      <div className="flex-1 overflow-auto">
         <div className="inline-flex">
           <div className="flex flex-col">
             <div className="flex">

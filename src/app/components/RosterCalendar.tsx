@@ -630,8 +630,7 @@ export default function RosterCalendar({ rosterState, onStateChange }: RosterCal
         onNavigate={handleNavigate}
         dateRangeText={selectedDateRangeText}
       />
-      <div className="p-6">
-        <Calendar
+      <Calendar
         ref={calendarRef}
         height="600px"
         view={rosterState.viewMode}
@@ -654,7 +653,6 @@ export default function RosterCalendar({ rosterState, onStateChange }: RosterCal
         onBeforeDeleteEvent={onBeforeDeleteEvent}
         onBeforeUpdateEvent={onBeforeUpdateEvent}
       />
-      </div>
     </div>
   );
 }
