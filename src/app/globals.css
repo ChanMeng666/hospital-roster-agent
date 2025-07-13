@@ -144,3 +144,55 @@ input[type="checkbox"] {
   color: #666 !important;
   opacity: 1;
 }
+
+/* React Spreadsheet Responsive Styles */
+.spreadsheet {
+  width: 100% !important;
+  font-size: 14px;
+}
+
+.spreadsheet table {
+  width: 100% !important;
+  min-width: 600px;
+}
+
+.spreadsheet th,
+.spreadsheet td {
+  padding: 8px 12px !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+.spreadsheet th {
+  background-color: #f9fafb !important;
+  font-weight: 600 !important;
+  color: #374151 !important;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.spreadsheet td.active {
+  border: 2px solid var(--brand-primary) !important;
+  outline: none !important;
+}
+
+.spreadsheet input {
+  color: #000 !important;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  width: 100% !important;
+  padding: 0 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .spreadsheet {
+    font-size: 12px;
+  }
+  
+  .spreadsheet th,
+  .spreadsheet td {
+    padding: 6px 8px !important;
+  }
+}

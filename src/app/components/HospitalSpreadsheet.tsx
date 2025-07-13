@@ -209,48 +209,57 @@ export default function HospitalSpreadsheet({
   });
 
   return (
-    <div className="flex-1 bg-white p-6">
-      <div className="mb-4 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <h2 className="text-xl font-semibold">Spreadsheet Editor</h2>
-          <select
-            value={selectedSpreadsheetIndex}
-            onChange={(e) => setSelectedSpreadsheetIndex(parseInt(e.target.value))}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            style={{ borderColor: "var(--brand-primary)" }}
-          >
-            {spreadsheets.map((sheet, index) => (
-              <option key={index} value={index}>
-                {sheet.title}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="text-sm text-gray-500">
-          {spreadsheet.rows.length} rows × {spreadsheet.rows[0]?.length || 0} columns
+    <div className="bg-white h-full flex flex-col">
+      <div className="p-6 border-b">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <h2 className="text-xl font-semibold">Spreadsheet Editor</h2>
+            <select
+              value={selectedSpreadsheetIndex}
+              onChange={(e) => setSelectedSpreadsheetIndex(parseInt(e.target.value))}
+              className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 transition-colors"
+              style={{ 
+                borderColor: "var(--brand-primary)",
+                focusBorderColor: "var(--brand-primary)"
+              }}
+            >
+              {spreadsheets.map((sheet, index) => (
+                <option key={index} value={index}>
+                  {sheet.title}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="text-sm text-gray-500">
+            {spreadsheet.rows.length} rows × {spreadsheet.rows[0]?.length || 0} columns
+          </div>
         </div>
       </div>
 
-      <div className="border rounded-lg overflow-auto" style={{ maxHeight: "calc(100vh - 200px)" }}>
-        <Spreadsheet
-          data={spreadsheet.rows}
-          onChange={(data) => {
-            setSpreadsheet({
-              ...spreadsheet,
-              rows: data as SpreadsheetRow[],
-            });
-          }}
-          columnLabels={["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"]}
-        />
-      </div>
+      <div className="flex-1 p-6 overflow-hidden">
+        <div className="h-full flex flex-col">
+          <div className="flex-1 border rounded-lg overflow-auto">
+            <Spreadsheet
+              data={spreadsheet.rows}
+              onChange={(data) => {
+                setSpreadsheet({
+                  ...spreadsheet,
+                  rows: data as SpreadsheetRow[],
+                });
+              }}
+              columnLabels={["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"]}
+            />
+          </div>
 
-      <div className="mt-4 text-sm text-gray-600">
-        <p>💡 Tips:</p>
-        <ul className="list-disc list-inside ml-4 mt-2">
-          <li>Click any cell to edit its value</li>
-          <li>Use Tab or Enter to navigate between cells</li>
-          <li>Ask the AI assistant to help with roster calculations or schedule optimization</li>
-        </ul>
+          <div className="mt-4 text-sm text-gray-600 border-t pt-4">
+            <p className="font-medium mb-2">💡 Tips:</p>
+            <ul className="list-disc list-inside ml-4 space-y-1">
+              <li>Click any cell to edit its value</li>
+              <li>Use Tab or Enter to navigate between cells</li>
+              <li>Ask the AI assistant to help with roster calculations or schedule optimization</li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   );
