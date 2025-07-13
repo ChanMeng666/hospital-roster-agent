@@ -513,6 +513,122 @@ export default function HospitalSpreadsheetEnhanced({
     },
   });
 
+  // AI Action: Update cell value
+  useCopilotAction({
+    name: "updateCellValue",
+    description: "Update the value of a specific cell in the spreadsheet",
+    parameters: [
+      {
+        name: "row",
+        type: "number",
+        description: "Row number (1-based index)",
+        required: true,
+      },
+      {
+        name: "column",
+        type: "number",
+        description: "Column number (1-based index, or use A=1, B=2, etc.)",
+        required: true,
+      },
+      {
+        name: "value",
+        type: "string",
+        description: "The new value for the cell",
+        required: true,
+      },
+    ],
+    handler: ({ row, column, value }) => {
+      const rowIndex = row - 1;
+      const colIndex = column - 1;
+      
+      if (rowIndex >= 0 && rowIndex < spreadsheet.rows.length &&
+          colIndex >= 0 && colIndex < spreadsheet.rows[0].length) {
+        const newRows = [...spreadsheet.rows];
+        newRows[rowIndex][colIndex] = { value };
+        setSpreadsheet({ ...spreadsheet, rows: newRows });
+      }
+    },
+  });
+
+  // AI Action: Select rows
+  useCopilotAction({
+    name: "selectRows",
+    description: "Select specific rows in the spreadsheet",
+    parameters: [
+      {
+        name: "rowNumbers",
+        type: "number[]",
+        description: "Array of row numbers to select (1-based index)",
+        required: true,
+      },
+    ],
+    handler: ({ rowNumbers }) => {
+      const newSelection = new Set(rowNumbers.map(n => n - 1).filter(n => n >= 0 && n < spreadsheet.rows.length));
+      setSelectedRows(newSelection);
+    },
+  });
+
+  // AI Action: Select columns
+  useCopilotAction({
+    name: "selectColumns",
+    description: "Select specific columns in the spreadsheet",
+    parameters: [
+      {
+        name: "columnNumbers",
+        type: "number[]",
+        description: "Array of column numbers to select (1-based index)",
+        required: true,
+      },
+    ],
+    handler: ({ columnNumbers }) => {
+      const newSelection = new Set(columnNumbers.map(n => n - 1).filter(n => n >= 0 && n < spreadsheet.rows[0].length));
+      setSelectedColumns(newSelection);
+    },
+  });
+
+  // AI Action: Clear selection
+  useCopilotAction({
+    name: "clearSelection",
+    description: "Clear all row and column selections",
+    parameters: [],
+    handler: () => {
+      setSelectedRows(new Set());
+      setSelectedColumns(new Set());
+    },
+  });
+
+  // AI Action: Export spreadsheet
+  useCopilotAction({
+    name: "exportCurrentSpreadsheet",
+    description: "Export the current spreadsheet as JSON file",
+    parameters: [],
+    handler: () => {
+      exportSpreadsheet();
+      return {
+        message: `Exported "${spreadsheet.title}" as JSON file`,
+        filename: `${spreadsheet.title.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.json`
+      };
+    },
+  });
+
+  // AI Action: Get spreadsheet info
+  useCopilotAction({
+    name: "getSpreadsheetInfo",
+    description: "Get information about the current spreadsheet state",
+    parameters: [],
+    handler: () => {
+      return {
+        currentSpreadsheet: spreadsheet.title,
+        totalSpreadsheets: spreadsheets.length,
+        rows: spreadsheet.rows.length,
+        columns: spreadsheet.rows[0]?.length || 0,
+        selectedRows: Array.from(selectedRows).map(r => r + 1),
+        selectedColumns: Array.from(selectedColumns).map(c => c + 1),
+        availableSpreadsheets: spreadsheets.map(s => s.title),
+      };
+    },
+  });
+
   return (
     <div className="bg-gray-50 h-full flex flex-col">
       <div className="bg-white p-6 border-b">

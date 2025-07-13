@@ -108,6 +108,7 @@ function MainContent() {
           rosterState={rosterState}
           onStateChange={setRosterState}
           selectedStaffIds={selectedStaffIds}
+          onSelectionChange={setSelectedStaffIds}
         />
       </Suspense>
     </div>

@@ -512,6 +512,73 @@ export default function HospitalSpreadsheet({
     },
   });
 
+  // AI Action: Update cell value
+  useCopilotAction({
+    name: "updateCellValue",
+    description: "Update the value of a specific cell in the spreadsheet",
+    parameters: [
+      {
+        name: "row",
+        type: "number",
+        description: "Row number (1-based index)",
+        required: true,
+      },
+      {
+        name: "column",
+        type: "number",
+        description: "Column number (1-based index, or use A=1, B=2, etc.)",
+        required: true,
+      },
+      {
+        name: "value",
+        type: "string",
+        description: "The new value for the cell",
+        required: true,
+      },
+    ],
+    handler: ({ row, column, value }) => {
+      const rowIndex = row - 1;
+      const colIndex = column - 1;
+      
+      if (rowIndex >= 0 && rowIndex < spreadsheet.rows.length &&
+          colIndex >= 0 && colIndex < spreadsheet.rows[0].length) {
+        const newRows = [...spreadsheet.rows];
+        newRows[rowIndex][colIndex] = { value };
+        setSpreadsheet({ ...spreadsheet, rows: newRows });
+      }
+    },
+  });
+
+  // AI Action: Export spreadsheet
+  useCopilotAction({
+    name: "exportCurrentSpreadsheet",
+    description: "Export the current spreadsheet as JSON file",
+    parameters: [],
+    handler: () => {
+      exportSpreadsheet();
+      return {
+        message: `Exported "${spreadsheet.title}" as JSON file`,
+        filename: `${spreadsheet.title.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.json`
+      };
+    },
+  });
+
+  // AI Action: Get spreadsheet info
+  useCopilotAction({
+    name: "getSpreadsheetInfo",
+    description: "Get information about the current spreadsheet state",
+    parameters: [],
+    handler: () => {
+      return {
+        currentSpreadsheet: spreadsheet.title,
+        totalSpreadsheets: spreadsheets.length,
+        rows: spreadsheet.rows.length,
+        columns: spreadsheet.rows[0]?.length || 0,
+        availableSpreadsheets: spreadsheets.map(s => s.title),
+      };
+    },
+  });
+
   return (
     <div className="bg-gray-50 h-full flex flex-col">
       <div className="bg-white p-6 border-b">

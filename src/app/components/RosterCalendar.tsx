@@ -12,9 +12,10 @@ interface RosterCalendarProps {
   rosterState: RosterAgentState;
   onStateChange: (state: RosterAgentState) => void;
   selectedStaffIds?: Set<string>;
+  onSelectionChange?: (selectedIds: Set<string>) => void;
 }
 
-export default function RosterCalendar({ rosterState, onStateChange, selectedStaffIds }: RosterCalendarProps) {
+export default function RosterCalendar({ rosterState, onStateChange, selectedStaffIds, onSelectionChange }: RosterCalendarProps) {
   const calendarRef = useRef<typeof Calendar>(null);
   const [selectedDateRangeText, setSelectedDateRangeText] = useState("");
 
@@ -57,6 +58,9 @@ export default function RosterCalendar({ rosterState, onStateChange, selectedSta
         staffName: rosterState.staff.find(s => s.id === shift.staffId)?.name,
       })),
       currentView: rosterState.viewMode,
+      selectedDate: rosterState.selectedDate,
+      dateRangeText: selectedDateRangeText,
+      filteredByStaff: selectedStaffIds ? Array.from(selectedStaffIds) : [],
     },
   });
 
@@ -482,6 +486,64 @@ export default function RosterCalendar({ rosterState, onStateChange, selectedSta
           viewMode: viewMode as any,
         });
       }
+    },
+  });
+
+  // AI Action: Navigate calendar
+  useCopilotAction({
+    name: "navigateCalendar",
+    description: "Navigate the calendar to today, previous or next period",
+    parameters: [
+      {
+        name: "direction",
+        type: "string",
+        description: "Navigation direction: today, prev, or next",
+        required: true,
+      },
+    ],
+    handler: ({ direction }) => {
+      if (["today", "prev", "next"].includes(direction)) {
+        handleNavigate(direction as "today" | "prev" | "next");
+      }
+    },
+  });
+
+  // AI Action: Filter calendar by staff
+  useCopilotAction({
+    name: "filterCalendarByStaff",
+    description: "Filter calendar to show shifts for specific staff members",
+    parameters: [
+      {
+        name: "staffIds",
+        type: "string[]",
+        description: "Array of staff IDs to filter by. Empty array shows all staff",
+        required: true,
+      },
+    ],
+    handler: ({ staffIds }) => {
+      // This requires passing the selection up to the parent component
+      // We need to add a callback prop for this
+      if (selectedStaffIds !== undefined && onSelectionChange) {
+        const newSelection = new Set(staffIds);
+        onSelectionChange(newSelection);
+      }
+    },
+  });
+
+  // AI Action: Get calendar state
+  useCopilotAction({
+    name: "getCalendarState",
+    description: "Get current calendar view state including date range and filters",
+    parameters: [],
+    handler: () => {
+      return {
+        viewMode: rosterState.viewMode,
+        selectedDate: rosterState.selectedDate,
+        dateRangeText: selectedDateRangeText,
+        filteredByStaff: selectedStaffIds ? Array.from(selectedStaffIds) : [],
+        totalShifts: rosterState.shifts.length,
+        visibleShifts: filteredShifts.length,
+      };
     },
   });
 
