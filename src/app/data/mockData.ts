@@ -67,7 +67,7 @@ const getWeekDates = () => {
 const weekDates = getWeekDates();
 
 // Helper function to create a shift
-const createShift = (id: string, staffId: string, staffName: string, date: Date, startHour: number, endHour: number, type: string, department: string): Shift => {
+const createShift = (id: string, staffId: string, staffName: string, date: Date, startHour: number, endHour: number, type: "Morning" | "Afternoon" | "Night" | "On-Call" | "Training" | "Meeting" | "Conference", department: string): Shift => {
   const start = new Date(date);
   start.setHours(startHour, 0, 0, 0);
   const end = new Date(date);

@@ -12,7 +12,7 @@ export interface Shift {
   title: string;
   start: Date;
   end: Date;
-  type: "Morning" | "Afternoon" | "Night" | "On-Call";
+  type: "Morning" | "Afternoon" | "Night" | "On-Call" | "Training" | "Meeting" | "Conference";
   department: string;
 }
 
