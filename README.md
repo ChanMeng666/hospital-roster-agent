@@ -1,6 +1,6 @@
 <div align="center"><a name="readme-top"></a>
 
-[![Project Banner](https://via.placeholder.com/1200x400/4A90E2/FFFFFF?text=Hospital+Roster+Agent+🏥)](#)
+[![Project Banner](./public/hospital-roster-agent-logo.svg)](#)
 
 # 🏥 Hospital Roster Agent<br/><h3>AI-Powered Hospital Staff Scheduling System</h3>
 
