@@ -104,13 +104,31 @@ function MainContent() {
         />
       </Suspense>
       <Suspense fallback={<div>Loading calendar...</div>}>
-        <RosterCalendar 
+        <RosterCalendar
           rosterState={rosterState}
           onStateChange={setRosterState}
           selectedStaffIds={selectedStaffIds}
           onSelectionChange={setSelectedStaffIds}
         />
       </Suspense>
+
+      {/* Developer brand credit — Chan Meng */}
+      <footer style={{ marginTop: "24px", padding: "16px", borderTop: "1px solid rgba(0,0,0,0.08)", textAlign: "center" }}>
+        <a
+          href="https://github.com/ChanMeng666"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ display: "inline-flex", alignItems: "center", gap: "8px", fontSize: "12px", color: "#6b7280", textDecoration: "none" }}
+        >
+          <img src="/brand/chan-meng-monkey.svg" alt="Chan Meng" style={{ width: "20px", height: "20px" }} />
+          <span style={{ fontWeight: 500 }}>Built by Chan Meng — need a custom app like this one?</span>
+        </a>
+        <div style={{ marginTop: "4px", fontSize: "12px" }}>
+          <a href="mailto:chanmeng.dev@gmail.com" style={{ color: "#9ca3af", textDecoration: "none" }}>
+            chanmeng.dev@gmail.com
+          </a>
+        </div>
+      </footer>
     </div>
   );
 }
